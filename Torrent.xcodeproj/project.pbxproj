@@ -1,0 +1,458 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C646C032AC3286F00AB1610 /* TorrentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C022AC3286F00AB1610 /* TorrentApp.swift */; };
+		1C646C072AC3287000AB1610 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C646C062AC3287000AB1610 /* Assets.xcassets */; };
+		1C646C0A2AC3287000AB1610 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C646C092AC3287000AB1610 /* Preview Assets.xcassets */; };
+		1C646C0C2AC3287000AB1610 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C0B2AC3287000AB1610 /* Persistence.swift */; };
+		1C646C0F2AC3287000AB1610 /* Torrent.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C0D2AC3287000AB1610 /* Torrent.xcdatamodeld */; };
+		1C646C1B2AC329B200AB1610 /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C1A2AC329B200AB1610 /* WeatherViewModel.swift */; };
+		1C646C1D2AC329F700AB1610 /* RealTimeWeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C1C2AC329F700AB1610 /* RealTimeWeatherView.swift */; };
+		1C646C1F2AC32C0900AB1610 /* WeatherDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C1E2AC32C0900AB1610 /* WeatherDataModel.swift */; };
+		1C646C212AC32F3900AB1610 /* WeatherExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C202AC32F3900AB1610 /* WeatherExtensions.swift */; };
+		1C646C242AC3318B00AB1610 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C232AC3318B00AB1610 /* ImageLoader.swift */; };
+		1C646C262AC3364600AB1610 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C252AC3364600AB1610 /* ContentView.swift */; };
+		1C646C282AC33A2000AB1610 /* CityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C272AC33A2000AB1610 /* CityData.swift */; };
+		1C646C2A2AC33B8A00AB1610 /* CityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C292AC33B8A00AB1610 /* CityViewModel.swift */; };
+		1C646C2C2AC3410400AB1610 /* Searchbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C2B2AC3410400AB1610 /* Searchbar.swift */; };
+		1C646C2E2AC34EDD00AB1610 /* CitySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C2D2AC34EDD00AB1610 /* CitySearchView.swift */; };
+		1C646C352AC4252E00AB1610 /* cities.json in Resources */ = {isa = PBXBuildFile; fileRef = 1C646C342AC4252E00AB1610 /* cities.json */; };
+		1C646C372AC4803A00AB1610 /* RecentWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C362AC4803A00AB1610 /* RecentWeatherViewModel.swift */; };
+		1C646C392AC480B600AB1610 /* RecentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C382AC480B600AB1610 /* RecentWeather.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1C646BFF2AC3286F00AB1610 /* Torrent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Torrent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C646C022AC3286F00AB1610 /* TorrentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorrentApp.swift; sourceTree = "<group>"; };
+		1C646C062AC3287000AB1610 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1C646C092AC3287000AB1610 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1C646C0B2AC3287000AB1610 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		1C646C0E2AC3287000AB1610 /* Torrent.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Torrent.xcdatamodel; sourceTree = "<group>"; };
+		1C646C102AC3287000AB1610 /* Torrent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Torrent.entitlements; sourceTree = "<group>"; };
+		1C646C112AC3287000AB1610 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C646C1A2AC329B200AB1610 /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
+		1C646C1C2AC329F700AB1610 /* RealTimeWeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTimeWeatherView.swift; sourceTree = "<group>"; };
+		1C646C1E2AC32C0900AB1610 /* WeatherDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataModel.swift; sourceTree = "<group>"; };
+		1C646C202AC32F3900AB1610 /* WeatherExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherExtensions.swift; sourceTree = "<group>"; };
+		1C646C232AC3318B00AB1610 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
+		1C646C252AC3364600AB1610 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = ../ContentView.swift; sourceTree = "<group>"; };
+		1C646C272AC33A2000AB1610 /* CityData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityData.swift; sourceTree = "<group>"; };
+		1C646C292AC33B8A00AB1610 /* CityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityViewModel.swift; sourceTree = "<group>"; };
+		1C646C2B2AC3410400AB1610 /* Searchbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Searchbar.swift; sourceTree = "<group>"; };
+		1C646C2D2AC34EDD00AB1610 /* CitySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitySearchView.swift; sourceTree = "<group>"; };
+		1C646C342AC4252E00AB1610 /* cities.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cities.json; sourceTree = "<group>"; };
+		1C646C362AC4803A00AB1610 /* RecentWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentWeatherViewModel.swift; sourceTree = "<group>"; };
+		1C646C382AC480B600AB1610 /* RecentWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentWeather.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1C646BFC2AC3286F00AB1610 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C646BF62AC3286F00AB1610 = {
+			isa = PBXGroup;
+			children = (
+				1C646C012AC3286F00AB1610 /* Torrent */,
+				1C646C002AC3286F00AB1610 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1C646C002AC3286F00AB1610 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C646BFF2AC3286F00AB1610 /* Torrent.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C646C012AC3286F00AB1610 /* Torrent */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C252AC3364600AB1610 /* ContentView.swift */,
+				1C646C222AC3317D00AB1610 /* Utility */,
+				1C646C192AC328A000AB1610 /* ViewModel */,
+				1C646C182AC3289A00AB1610 /* View */,
+				1C646C172AC3289300AB1610 /* Model */,
+				1C646C022AC3286F00AB1610 /* TorrentApp.swift */,
+				1C646C062AC3287000AB1610 /* Assets.xcassets */,
+				1C646C0B2AC3287000AB1610 /* Persistence.swift */,
+				1C646C102AC3287000AB1610 /* Torrent.entitlements */,
+				1C646C112AC3287000AB1610 /* Info.plist */,
+				1C646C0D2AC3287000AB1610 /* Torrent.xcdatamodeld */,
+				1C646C082AC3287000AB1610 /* Preview Content */,
+				1C646C342AC4252E00AB1610 /* cities.json */,
+			);
+			path = Torrent;
+			sourceTree = "<group>";
+		};
+		1C646C082AC3287000AB1610 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C092AC3287000AB1610 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1C646C172AC3289300AB1610 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C1E2AC32C0900AB1610 /* WeatherDataModel.swift */,
+				1C646C272AC33A2000AB1610 /* CityData.swift */,
+				1C646C382AC480B600AB1610 /* RecentWeather.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		1C646C182AC3289A00AB1610 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C1C2AC329F700AB1610 /* RealTimeWeatherView.swift */,
+				1C646C2B2AC3410400AB1610 /* Searchbar.swift */,
+				1C646C2D2AC34EDD00AB1610 /* CitySearchView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		1C646C192AC328A000AB1610 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C1A2AC329B200AB1610 /* WeatherViewModel.swift */,
+				1C646C292AC33B8A00AB1610 /* CityViewModel.swift */,
+				1C646C362AC4803A00AB1610 /* RecentWeatherViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		1C646C222AC3317D00AB1610 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				1C646C202AC32F3900AB1610 /* WeatherExtensions.swift */,
+				1C646C232AC3318B00AB1610 /* ImageLoader.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1C646BFE2AC3286F00AB1610 /* Torrent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C646C142AC3287000AB1610 /* Build configuration list for PBXNativeTarget "Torrent" */;
+			buildPhases = (
+				1C646BFB2AC3286F00AB1610 /* Sources */,
+				1C646BFC2AC3286F00AB1610 /* Frameworks */,
+				1C646BFD2AC3286F00AB1610 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Torrent;
+			productName = Torrent;
+			productReference = 1C646BFF2AC3286F00AB1610 /* Torrent.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1C646BF72AC3286F00AB1610 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					1C646BFE2AC3286F00AB1610 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 1C646BFA2AC3286F00AB1610 /* Build configuration list for PBXProject "Torrent" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1C646BF62AC3286F00AB1610;
+			productRefGroup = 1C646C002AC3286F00AB1610 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1C646BFE2AC3286F00AB1610 /* Torrent */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1C646BFD2AC3286F00AB1610 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C646C352AC4252E00AB1610 /* cities.json in Resources */,
+				1C646C0A2AC3287000AB1610 /* Preview Assets.xcassets in Resources */,
+				1C646C072AC3287000AB1610 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1C646BFB2AC3286F00AB1610 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C646C1B2AC329B200AB1610 /* WeatherViewModel.swift in Sources */,
+				1C646C2A2AC33B8A00AB1610 /* CityViewModel.swift in Sources */,
+				1C646C0C2AC3287000AB1610 /* Persistence.swift in Sources */,
+				1C646C212AC32F3900AB1610 /* WeatherExtensions.swift in Sources */,
+				1C646C1F2AC32C0900AB1610 /* WeatherDataModel.swift in Sources */,
+				1C646C2C2AC3410400AB1610 /* Searchbar.swift in Sources */,
+				1C646C1D2AC329F700AB1610 /* RealTimeWeatherView.swift in Sources */,
+				1C646C262AC3364600AB1610 /* ContentView.swift in Sources */,
+				1C646C2E2AC34EDD00AB1610 /* CitySearchView.swift in Sources */,
+				1C646C282AC33A2000AB1610 /* CityData.swift in Sources */,
+				1C646C372AC4803A00AB1610 /* RecentWeatherViewModel.swift in Sources */,
+				1C646C392AC480B600AB1610 /* RecentWeather.swift in Sources */,
+				1C646C242AC3318B00AB1610 /* ImageLoader.swift in Sources */,
+				1C646C0F2AC3287000AB1610 /* Torrent.xcdatamodeld in Sources */,
+				1C646C032AC3286F00AB1610 /* TorrentApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1C646C122AC3287000AB1610 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1C646C132AC3287000AB1610 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1C646C152AC3287000AB1610 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Torrent/Torrent.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Torrent/Preview Content\"";
+				DEVELOPMENT_TEAM = 5GZC5WLRP3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Torrent/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.14358081.Torrent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1C646C162AC3287000AB1610 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Torrent/Torrent.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Torrent/Preview Content\"";
+				DEVELOPMENT_TEAM = 5GZC5WLRP3;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Torrent/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.14358081.Torrent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1C646BFA2AC3286F00AB1610 /* Build configuration list for PBXProject "Torrent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C646C122AC3287000AB1610 /* Debug */,
+				1C646C132AC3287000AB1610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1C646C142AC3287000AB1610 /* Build configuration list for PBXNativeTarget "Torrent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C646C152AC3287000AB1610 /* Debug */,
+				1C646C162AC3287000AB1610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1C646C0D2AC3287000AB1610 /* Torrent.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1C646C0E2AC3287000AB1610 /* Torrent.xcdatamodel */,
+			);
+			currentVersion = 1C646C0E2AC3287000AB1610 /* Torrent.xcdatamodel */;
+			path = Torrent.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 1C646BF72AC3286F00AB1610 /* Project object */;
+}
