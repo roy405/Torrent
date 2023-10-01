@@ -27,6 +27,7 @@ class RecentWeatherViewModel: ObservableObject {
             let fetchedResults = try context.fetch(fetchRequest)
             // Convert fetched WeatherEntity objects to RecentWeather structs
             self.recentWeatherData = fetchedResults.map { RecentWeather(recentWeatherEntity: $0) }
+            print(self.recentWeatherData)
         } catch {
             print("Error fetching recent weather from Core Data: \(error)")
         }

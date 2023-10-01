@@ -4,7 +4,12 @@
 <dict>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Requires location information to provide user with weather details and updates</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Requires location information to provide user with background updates (once daily)</string>
 </dict>
 </plist>

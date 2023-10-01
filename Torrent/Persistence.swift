@@ -52,6 +52,46 @@ struct PersistenceController {
         }
     }
     
+    func saveRecommendationToCoreData(recommendation: Recommendation) {
+        let context = container.newBackgroundContext() // Use background context
+        context.perform {
+            let recommendationEntity = RecommendationEntity(context: context)
+            recommendationEntity.id = recommendation.id
+            recommendationEntity.dateAndTime = recommendation.dateAndTime
+            recommendationEntity.recommendation = recommendation.recommendation
+            recommendationEntity.weatherCondition = recommendation.weatherCondition
+            
+            if context.hasChanges { // Check if there are changes before saving
+                do {
+                    try context.save()
+                    print("Successfully saved recommendation to Core Data.")
+                } catch let error as NSError {
+                    // Handle the error, maybe notify the user or recover
+                    print("Could not save recommendation. \(error), \(error.userInfo)")
+                }
+            }
+        }
+    }
+    
+    func fetchRecommendations() -> [Recommendation] {
+        let fetchRequest = NSFetchRequest<RecommendationEntity>(entityName: "RecommendationEntity")
+        
+        do {
+            let cdRecommendations = try container.viewContext.fetch(fetchRequest)
+            return cdRecommendations.map {
+                Recommendation(
+                    id: $0.id!,
+                    dateAndTime: $0.dateAndTime!,
+                    recommendation: $0.recommendation!,
+                    weatherCondition: $0.weatherCondition!
+                )
+            }
+        } catch {
+            print("Failed fetching recommendations: \(error)")
+            return []
+        }
+    }
+    
     func hasCities() -> Bool {
         let fetchRequest: NSFetchRequest<CityEntity> = CityEntity.fetchRequest()
         let count = try? container.viewContext.count(for: fetchRequest)

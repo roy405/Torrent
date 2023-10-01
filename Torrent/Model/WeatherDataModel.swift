@@ -7,9 +7,13 @@
 
 import Foundation
 
-import Foundation
+struct DecodableWeatherResponse: Codable {
+    let location: Location
+    let current: CurrentWeather
+}
 
-struct WeatherResponse: Codable {
+struct WeatherResponse: Codable, Identifiable{
+    let id: UUID
     let location: Location
     let current: CurrentWeather
 }

@@ -14,6 +14,8 @@ struct RecentWeather: Identifiable, Hashable{
     var temperature: Double
     var conditionText: String
     var iconURL: String
+    var longitude: Double
+    var latitude: Double
     
     init(recentWeatherEntity: RecentWeatherEntity) {
         self.id = recentWeatherEntity.id!
@@ -22,5 +24,7 @@ struct RecentWeather: Identifiable, Hashable{
         self.temperature = recentWeatherEntity.temperature
         self.conditionText = recentWeatherEntity.conditionText ?? ""
         self.iconURL = recentWeatherEntity.iconURL ?? ""
+        self.longitude = recentWeatherEntity.longitude 
+        self.latitude = recentWeatherEntity.latitude 
     }
 }

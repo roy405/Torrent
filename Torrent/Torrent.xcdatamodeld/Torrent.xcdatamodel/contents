@@ -13,7 +13,15 @@
         <attribute name="country" optional="YES" attributeType="String"/>
         <attribute name="iconURL" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="temperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="RecommendationEntity" representedClassName="RecommendationEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="dateAndTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="recommendation" optional="YES" attributeType="String"/>
+        <attribute name="weatherCondition" optional="YES" attributeType="String"/>
     </entity>
     <entity name="WeatherEntity" representedClassName="WeatherEntity" syncable="YES" codeGenerationType="class">
         <attribute name="conditionIconUrl" optional="YES" attributeType="String"/>

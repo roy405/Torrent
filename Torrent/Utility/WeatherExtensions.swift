@@ -50,7 +50,7 @@ extension WeatherResponse {
                                             gust_mph: 0,
                                             gust_kph: 0)
         
-        self.init(location: location, current: currentWeather)
+        self.init(id: UUID(), location: location, current: currentWeather)
     }
     
     // Save a WeatherResponse instance to CoreData as a WeatherEntity

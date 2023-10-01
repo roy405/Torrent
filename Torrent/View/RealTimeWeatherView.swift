@@ -6,16 +6,17 @@
 //
 
 import SwiftUI
+
 struct RealTimeWeatherView: View {
     @ObservedObject var viewModel: WeatherViewModel = WeatherViewModel()
     @ObservedObject private var imageLoader = ImageLoader()
-    
     @State private var isShowingCitySearch: Bool = false
-
     @ObservedObject var recentWeatherViewModel = RecentWeatherViewModel()
 
     var body: some View {
         VStack(spacing: 20) {
+            CurrentWeatherComponent(viewModel: viewModel)
+                           .padding(.horizontal)
             HStack {
                 Button(action: {
                     self.isShowingCitySearch.toggle()
@@ -65,7 +66,6 @@ struct RealTimeWeatherView: View {
         }
     }
 }
-
 
 
 struct RealTimeWeatherView_Preview: PreviewProvider {
