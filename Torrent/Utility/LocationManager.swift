@@ -11,6 +11,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()
     private var weatherViewModel = WeatherViewModel()
     private var recommendationViewModel = RecommendationViewModel()
+    private var isProcessingUpdate: Bool = false
     
     @Published var latestRecommendation: String = ""
     
@@ -42,8 +43,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard !isProcessingUpdate else { return }
+
+        isProcessingUpdate = true
         print("Location manager did update locations.")
-        guard let latestLocation = locations.last else { return }
+        guard let latestLocation = locations.last, latestLocation.horizontalAccuracy <= 50.0 else { return }
 
         fetchCityName(from: latestLocation.coordinate) { cityName in
             print("Fetched city name: \(cityName)")
@@ -151,6 +155,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         print("Checking time. Current hour: \(currentHour), Current minute: \(currentMinute)")
         
-        return currentHour == 8 && currentMinute <= 5
+        return currentHour == 1 && currentMinute <= 25
     }
 }

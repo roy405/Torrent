@@ -44,13 +44,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func scheduleWeatherFetch() {
         let request = BGAppRefreshTaskRequest(identifier: "com.yourapp.fetchWeather")
-        
         let calendar = Calendar.current
         var dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
-        
         // Set the hour and minute to 8:00 AM.
-        dateComponents.hour = 5
-        dateComponents.minute = 13
+        dateComponents.hour = 1
+        dateComponents.minute = 23
         
         // Get the next 8:00 AM from now.
         if let today8am = calendar.date(from: dateComponents), Date() > today8am {
