@@ -21,8 +21,8 @@ class WeatherViewModel: ObservableObject {
     
     func fetchWeatherForRecommendation(_ cityName: String, completion: @escaping () -> Void) {
         getWeatherDataFromAPI(city: cityName)
-            .sink { completion in
-                switch completion {
+            .sink { completionStatus in
+                switch completionStatus {
                 case .finished:
                     print("Completed successfully.")
                 case .failure(let error):
@@ -43,6 +43,7 @@ class WeatherViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+
     
     func fetchWeatherByCityForMap(_ cityName: String){
         getWeatherDataFromAPI(city: cityName)
@@ -167,6 +168,17 @@ class WeatherViewModel: ObservableObject {
             NotificationCenter.default.post(name: NSNotification.Name("NewDataAdded"), object: nil)
         } catch {
             print("Error saving or fetching weather from Core Data: \(error)")
+        }
+    }
+    
+    func updateWeather(temperature: Double, conditionText: String, location: String, conditionIconURL: URL?) {
+        print("Updating weather with: temperature = \(temperature), conditionText = \(conditionText), location = \(location)")
+        DispatchQueue.main.async {
+            print("Updating weather with: temperature = \(temperature), conditionText = \(conditionText), location = \(location)")
+            self.temperature = temperature
+            self.conditionText = conditionText
+            self.location = location
+            self.conditionIconURL = conditionIconURL
         }
     }
 }

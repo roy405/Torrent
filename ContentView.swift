@@ -12,9 +12,9 @@ struct ContentView: View {
     @State private var isShowingMap = false
     @ObservedObject var recommendationViewModel = RecommendationViewModel()
 
-
     var body: some View {
         TabView(selection: $selectedTab) {
+
             // Now tab
             NavigationView {
                 RealTimeWeatherView()
@@ -22,37 +22,48 @@ struct ContentView: View {
                     .navigationBarItems(trailing: Button(action: {
                         self.isShowingMap.toggle()
                     }, label: {
-                        Image(systemName: "map") // Placeholder system image for maps
+                        Image(systemName: "map.fill") // More detailed icon
+                            .imageScale(.large) // Appropriate scaling
+                            .padding()
                     }))
                     .sheet(isPresented: $isShowingMap) {
                         WeatherMapView(isShowingMap: $isShowingMap)
                     }
             }
             .tabItem {
-                Image(systemName: "sun.max") // You can use a different image
-                Text("Now")
+                VStack {
+                    Image(systemName: "sun.max.fill") // Filled version for clarity
+                    Text("Now")
+                }
             }
             .tag(0)
 
-            NavigationView{
+            // Recommendations tab
+            NavigationView {
                 RecommendationView(recommendationViewModel: recommendationViewModel)
             }
-                .tabItem {
-                    Image(systemName: "cloud.sun") // Placeholder image, choose an appropriate one
+            .tabItem {
+                VStack {
+                    Image(systemName: "cloud.sun.fill") // Filled version for clarity
                     Text("Recommendations")
                 }
-                .tag(1)
+            }
+            .tag(1)
 
             // Real weather feedback tab
             Text("Real Weather Feedback Placeholder")
                 .tabItem {
-                    Image(systemName: "cloud.rain") // Placeholder image, choose an appropriate one
-                    Text("Feedback")
+                    VStack {
+                        Image(systemName: "cloud.rain.fill") // Filled version for clarity
+                        Text("Feedback")
+                    }
                 }
                 .tag(2)
         }
+        .accentColor(.blue) // Gives a nice tint to the selected items
     }
 }
+
 
 
 #Preview {

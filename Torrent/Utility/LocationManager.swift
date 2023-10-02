@@ -7,154 +7,196 @@
 
 import CoreLocation
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+class LocationManager: NSObject, CLLocationManagerDelegate {
+    
     private var locationManager = CLLocationManager()
-    private var weatherViewModel = WeatherViewModel()
-    private var recommendationViewModel = RecommendationViewModel()
-    private var isProcessingUpdate: Bool = false
+    private let persistenceController = PersistenceController.shared
+    private let weatherViewModel = WeatherViewModel()
+    private let currentWeatherViewModel = CurrentWeatherViewModel()
+    private var updateTimer: Timer?
+    @Published var authorizationStatus: CLAuthorizationStatus?
     
-    @Published var latestRecommendation: String = ""
-    
-    // UserDefaults property for storing last fetch date
-    private var lastFetchDate: Date? {
-        get {
-            UserDefaults.standard.object(forKey: "lastFetchDate") as? Date
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "lastFetchDate")
-        }
-    }
+    // Use this to stop location updates once we have accurate enough data
+    private var didFetchLocation: Bool = false
     
     override init() {
         super.init()
         self.locationManager.delegate = self
+        self.locationManager.requestWhenInUseAuthorization()
     }
     
-    func requestLocationAuthorization() {
-        locationManager.requestWhenInUseAuthorization()
+    func requestAuthorization() {
+        locationManager.requestWhenInUseAuthorization() // or requestAlwaysAuthorization() based on your needs
     }
     
-    func startUpdatingLocation() {
-        if shouldFetchWeather() {
-            locationManager.startUpdatingLocation()
-        } else {
-            print("Already fetched weather data within the last 24 hours. Skipping for now.")
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
+        self.authorizationStatus = status
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            // Now that we have permission, we can start fetching the location
+            scheduleLocationUpdate()
+        default:
+            // Handle other cases or inform the user they need to grant location access
+            break
         }
+    }
+    
+    
+    private func scheduleLocationUpdate() {
+        // Invalidate any existing timer
+        updateTimer?.invalidate()
+        
+        // Schedule a new timer to run every 3 hours
+        updateTimer = Timer.scheduledTimer(withTimeInterval: 3 * 60 * 60, repeats: true) { [weak self] _ in
+            self?.fetchAndUpdateLocation()
+        }
+        
+        // Trigger the first location update immediately
+        fetchAndUpdateLocation()
+    }
+    
+    private func fetchAndUpdateLocation() {
+        didFetchLocation = false
+        locationManager.startUpdatingLocation()
+    }
+    
+    func checkAndRequestAuthorization() {
+        requestAuthorization()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard !isProcessingUpdate else { return }
-
-        isProcessingUpdate = true
-        print("Location manager did update locations.")
-        guard let latestLocation = locations.last, latestLocation.horizontalAccuracy <= 50.0 else { return }
-
-        fetchCityName(from: latestLocation.coordinate) { cityName in
-            print("Fetched city name: \(cityName)")
-            
-            self.weatherViewModel.fetchWeatherForRecommendation(cityName) {
-                // Once fetching the weather data completes:
-                
-                // Generate and save recommendation based on fetched weather data
-                self.latestRecommendation = self.generateRecommendation(from: self.weatherViewModel)
-
-                // Save the recommendation to Core Data
-                self.recommendationViewModel.saveRecommendation(
-                    id: UUID(),
-                    dateAndTime: Date(),
-                    recommendation: self.latestRecommendation,
-                    weatherCondition: self.weatherViewModel.conditionText
-                )
-                
-                self.lastFetchDate = Date()
-                // Stop updating location after fetching weather data.
-                self.locationManager.stopUpdatingLocation()
-            }
+        guard !didFetchLocation else {
+            // We have already fetched the location
+            return
         }
-    }
-
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedAlways, .authorizedWhenInUse:
-            print("Location authorization granted. Starting location updates...")
-            startUpdatingLocation()
-        case .denied, .restricted:
-            print("Location authorization denied or restricted.")
-        case .notDetermined:
-            print("Location authorization not determined yet.")
-        default:
-            print("Unknown location authorization status.")
-        }
-    }
-
-    
-    func fetchCityName(from coordinate: CLLocationCoordinate2D, completion: @escaping (String) -> Void) {
-        let geocoder = CLGeocoder()
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
         
-        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            if let error = error {
-                print("Error reverse geocoding location: \(error)")
-                return
+        if let location = locations.last {
+            didFetchLocation = true
+            processLocationData(for: location)
+            locationManager.stopUpdatingLocation()
+        }
+    }
+    
+    private func processLocationData(for location: CLLocation) {
+        reverseGeocode(location: location) { cityName in
+            if let cityName = cityName {
+                
+                // Fetching the current weather data for the view update
+                self.fetchCurrentWeatherData(for: cityName) {
+                    // At this point, the currentWeatherViewModel properties have been updated
+                    // and it will be reflected in the CurrentWeatherView.
+                }
+                
+                // Fetching weather data using the city name
+                self.fetchWeatherData(for: cityName) {
+                    
+                    // Check for a saved recommendation for the current day
+                    let currentDayRecommendations = self.persistenceController.fetchRecommendationsForToday()
+                    
+                    if currentDayRecommendations.isEmpty {
+                        // No recommendation saved for today.
+                        // Generate a new recommendation using the fetched weather data
+                        let recommendation = self.generateRecommendation(temperature: self.weatherViewModel.temperature, conditionText: self.weatherViewModel.conditionText)
+                        
+                        // Save the new recommendation to persistence
+                        let recommendationToSave = Recommendation(
+                            id: UUID(),
+                            dateAndTime: Date(),
+                            recommendation: recommendation,
+                            weatherCondition: self.weatherViewModel.conditionText
+                        )
+                        self.persistenceController.saveRecommendationToCoreData(recommendation: recommendationToSave)
+                        
+                    } else {
+                        // Recommendation already saved for today
+                        if let todaysRecommendation = currentDayRecommendations.first {
+                            print(todaysRecommendation)
+                        }
+                    }
+                }
+            } else {
+                print("Failed to obtain city name from coordinates.")
+                // Handle the scenario where a city name wasn't obtained.
+                // You might want to provide a default behavior or notify the user.
             }
-            
-            if let firstPlacemark = placemarks?.first, let city = firstPlacemark.locality {
-                completion(city)
+        }
+    }
+
+    private func updateDashboardWeather(weather: WeatherViewModel) {
+        // Your logic to update the weather on the dashboard.
+        // For this example, I'll just print the weather's condition text
+        print("Dashboard Weather Update: \(weather.conditionText)")
+    }
+
+    
+    private func reverseGeocode(location: CLLocation, completion: @escaping (String?) -> Void) {
+        print(location)
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
+            if let placemark = placemarks?.first {
+                print("Locality: \(placemark.locality ?? "None")")
+                print("Administrative Area: \(placemark.administrativeArea ?? "None")")
+                print("Sub Locality: \(placemark.subLocality ?? "None")")
+                print("Name: \(placemark.name ?? "None")")
+            }
+            if let error = error {
+                print("Failed to get city name: \(error)")
+                completion(nil)
+            } else {
+                let cityName = placemarks?.first?.locality
+                print(cityName ?? "Did not get city name")
+                completion(cityName)
             }
         }
     }
     
-    func generateRecommendation(from viewModel: WeatherViewModel) -> String {
-        let baseWeatherText = "Weather: \(viewModel.conditionText) "
-        print("HELLO THERE this is the baseWeatherText \(baseWeatherText)")
-        print("look here \(viewModel.location) \(viewModel.temperature) \(viewModel.latitude) \(viewModel.longitude)")
-        // Using temperature and condition text to generate recommendations
-        if viewModel.temperature > 35 {
+    
+    private func fetchWeatherData(for city: String, completion: @escaping () -> Void) {
+        // Using the ViewModel's method to fetch weather
+        print("1 . fetchWeatherDeata is running")
+        weatherViewModel.fetchWeatherForRecommendation(city) {
+            
+            completion() // This is executed once the weatherViewModel updates its properties with the fetched weather data
+        }
+    }
+    
+    private func fetchCurrentWeatherData(for city: String, completion: @escaping() -> Void){
+        print("2 . fetchCurrentWeatherData is running")
+        currentWeatherViewModel.fetchCurrentWeatherData(for: city){
+            completion()
+        }
+    }
+    
+    private func generateRecommendation(temperature: Double, conditionText: String) -> String {
+        let baseWeatherText = "Today's weather: \(conditionText). "
+        print("getting reccomm!")
+        if temperature > 35 {
             return baseWeatherText + "It's scorching hot! Be careful of bushfires and stay hydrated."
-        } else if viewModel.temperature < 0 {
+        } else if temperature < 0 {
             return baseWeatherText + "It's freezing outside! Bundle up and be cautious of icy conditions."
-        } else if viewModel.conditionText.lowercased().contains("rain") {
+        } else if conditionText.lowercased().contains("rain") {
             return baseWeatherText + "Bring an umbrella. Going hiking might be a problem today."
-        } else if viewModel.conditionText.lowercased().contains("sunny") {
+        } else if conditionText.lowercased().contains("sunny") {
             return baseWeatherText + "It's a sunny day! Make sure to fill up your water bottle."
-        } else if viewModel.conditionText.lowercased().contains("snow") {
+        } else if conditionText.lowercased().contains("snow") {
             return baseWeatherText + "It's snowing! Make sure to wear warm clothes and tread carefully."
-        } else if viewModel.conditionText.lowercased().contains("thunderstorm") {
+        } else if conditionText.lowercased().contains("thunderstorm") {
             return baseWeatherText + "There's a thunderstorm. Stay indoors and avoid using electrical appliances."
-        } else if viewModel.conditionText.lowercased().contains("fog") {
+        } else if conditionText.lowercased().contains("fog") {
             return baseWeatherText + "Visibility might be low due to fog. Drive carefully."
-        } else if viewModel.conditionText.lowercased().contains("overcast") {
+        } else if conditionText.lowercased().contains("overcast") {
             return baseWeatherText + "The sky is overcast. A good day for indoor activities."
-        } else if viewModel.conditionText.lowercased().contains("windy") {
+        } else if conditionText.lowercased().contains("windy") {
             return baseWeatherText + "It's quite windy outside. Hold onto your hat!"
-        } else if viewModel.conditionText.lowercased().contains("partly cloudy"){
+        } else if conditionText.lowercased().contains("partly cloudy"){
             return baseWeatherText + "It's partly cloudy. You might want to carry a light jacket."
         }
         return baseWeatherText + "Enjoy your day!"
     }
     
-    // Helper method to determine if a weather data fetch should be performed
-    private func shouldFetchWeather() -> Bool {
-        guard let lastDate = lastFetchDate else {
-            // If there's no stored date, this is the first request.
-            return timeCheck()
-        }
-        
-        let currentDate = Date()
-        let timeInterval = currentDate.timeIntervalSince(lastDate)
-        let fetchCondition = timeCheck() && timeInterval >= 86400 // 86400 seconds is 24 hours
-        print("Should fetch weather? \(fetchCondition) | Last fetch time interval: \(timeInterval)")
-        return fetchCondition
-    }
-    
-    private func timeCheck() -> Bool {
-        let calendar = Calendar.current
-        let currentHour = calendar.component(.hour, from: Date())
-        let currentMinute = calendar.component(.minute, from: Date())
-        
-        print("Checking time. Current hour: \(currentHour), Current minute: \(currentMinute)")
-        
-        return currentHour == 1 && currentMinute <= 25
+    deinit {
+        updateTimer?.invalidate()
     }
 }
+

@@ -11,9 +11,10 @@ import CoreData
 class RecommendationViewModel: ObservableObject {
     
     @Published var recommendations: [Recommendation] = []
-    
+    @Published var todaysRecommendation: Recommendation?
+
     init() {
-        fetchRecommendations()
+        fetchTodaysRecommendation()
     }
     
     func saveRecommendation(id: UUID, dateAndTime: Date, recommendation: String, weatherCondition: String) {
@@ -23,6 +24,13 @@ class RecommendationViewModel: ObservableObject {
     
     func fetchRecommendations() {
         self.recommendations = PersistenceController.shared.fetchRecommendations()
+    }
+    
+    func fetchTodaysRecommendation() {
+        if let recommendationToday = PersistenceController.shared.fetchRecommendationsForToday().first {
+            todaysRecommendation = recommendationToday
+            print()
+        }
     }
 }
 

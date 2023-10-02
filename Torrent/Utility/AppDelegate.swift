@@ -47,8 +47,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let calendar = Calendar.current
         var dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date())
         // Set the hour and minute to 8:00 AM.
-        dateComponents.hour = 1
-        dateComponents.minute = 23
+        dateComponents.hour = 2
+        dateComponents.minute = 10
         
         // Get the next 8:00 AM from now.
         if let today8am = calendar.date(from: dateComponents), Date() > today8am {
