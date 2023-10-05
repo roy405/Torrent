@@ -10,10 +10,14 @@ import Combine
 import CoreData
 import UIKit
 
+// This view model manages and provides city data to the associated views.
 class CityViewModel: ObservableObject {
     
+    // Published properties to notify views of updates
     @Published var cities: [CityData] = []
+    @Published var error: Error?
     
+    // Structure to map raw data from JSON file
     private struct RawCityData: Codable {
         var id: Int32
         var cityname: String
@@ -21,36 +25,41 @@ class CityViewModel: ObservableObject {
         var latitude: String
         var longitude: String
     }
-
-    private var context: NSManagedObjectContext!
     
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        fetchCitiesFromCoreData()
+    // Initializes the CityViewModel by attempting to fetch existing cities
+    init() {
+        fetchCities()
     }
     
-    func fetchCitiesFromCoreData() {
-        let request: NSFetchRequest<CityEntity> = CityEntity.fetchRequest()
-        
-        if let fetchedCities = try? context.fetch(request), !fetchedCities.isEmpty {
-            self.cities = fetchedCities.map { CityData(id: $0.id,
-                                                       cityname: $0.cityname ?? "",
-                                                       country: $0.country ?? "",
-                                                       latitude: $0.latitude,
-                                                       longitude: $0.longitude) }
-        } else {
-            loadCitiesFromJSON()
+    // Fetches cities either from Core Data or JSON (if Core Data is empty)
+    func fetchCities() {
+        // Attempt to fetch cities from Core Data
+        switch PersistenceController.shared.fetchCities() {
+        case .success(let fetchedCities):
+            // If there are no cities in Core Data, load them from the JSON file
+            if fetchedCities.isEmpty {
+                loadCitiesFromJSON()
+            } else {
+                self.cities = fetchedCities
+            }
+        case .failure(let error):
+            // If there's an error fetching cities, set the error property
+            self.error = error
         }
     }
     
+    // Loads cities from the bundled JSON file and saves them to Core Data
     func loadCitiesFromJSON() {
+        // Check for the existence of the 'cities.json' file in the app bundle
         if let url = Bundle.main.url(forResource: "cities", withExtension: "json") {
             do {
+                // Load and decode the JSON data
                 let data = try Data(contentsOf: url)
                 let decoder = JSONDecoder()
                 
                 let rawCities = try decoder.decode([RawCityData].self, from: data)
                 
+                // Convert raw data into the app's CityData structure
                 let cities: [CityData] = rawCities.map { rawCity in
                     return CityData(
                         id: rawCity.id,
@@ -60,29 +69,22 @@ class CityViewModel: ObservableObject {
                         longitude: Double(rawCity.longitude) ?? nil
                     )
                 }
-
-                saveToCoreData(cities)
-                fetchCitiesFromCoreData()
+                
+                // Save the converted cities to Core Data
+                switch PersistenceController.shared.saveCitiesToCoreData(cities) {
+                case .success():
+                    // If saving is successful, fetch the cities again to update the UI
+                    fetchCities()
+                case .failure(let error):
+                    // If there's an error saving cities, set the error property
+                    self.error = error
+                }
             } catch {
-                print("Error reading JSON: \(error)")
+                // Handle any errors during JSON decoding or file reading
+                self.error = error
             }
         }
     }
-
-    
-    private func saveToCoreData(_ cities: [CityData]) {
-        for city in cities {
-            let cityEntity = NSEntityDescription.insertNewObject(forEntityName: "CityEntity", into: context) as! CityEntity
-            cityEntity.id = city.id
-            cityEntity.cityname = city.cityname
-            cityEntity.country = city.country
-            cityEntity.latitude = city.latitude ?? 0.0
-            cityEntity.longitude = city.longitude ?? 0.0
-        }
-        do {
-            try context.save()
-        } catch {
-            print("Failed saving: \(error)")
-        }
-    }
 }
+
+

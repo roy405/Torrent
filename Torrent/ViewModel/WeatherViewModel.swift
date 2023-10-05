@@ -9,7 +9,9 @@ import Foundation
 import Combine
 import CoreData
 
+// ViewModel for managing weather-related data and operations.
 class WeatherViewModel: ObservableObject {
+    // Published properties to automatically update the UI when changed.
     @Published var location: String = ""
     @Published var temperature: Double = 0.0
     @Published var conditionText: String = ""
@@ -17,8 +19,35 @@ class WeatherViewModel: ObservableObject {
     @Published var latitude: Double = 0.0
     @Published var longitude: Double = 0.0
     
+    // A collection of AnyCancellable instances that represent active publisher subscriptions.
     var cancellables: Set<AnyCancellable> = []
     
+    // Fetches weather data for feedback and updates the ViewModel properties.
+    func fetchWeatherForFeedback(_ cityName: String, completion: @escaping () -> Void){
+        getWeatherDataFromAPI(city: cityName)
+            .sink {completionStatus in
+                switch completionStatus {
+                case.finished:
+                    print("Completed Successsfully.")
+                case.failure(let error):
+                    print("Failed with error: \(error)")
+                }
+            } receiveValue: { weather in
+                print("Received weather data: \(weather)")
+                self.location = "\(weather.location.name), \(weather.location.country)"
+                self.temperature = weather.current.temp_c
+                self.conditionText = weather.current.condition.text
+                self.conditionIconURL = URL(string: "https:" + weather.current.condition.icon)
+                    
+                // Fetch latitude and longitude from API response
+                self.latitude = weather.location.lat
+                self.longitude = weather.location.lon
+                completion()
+            }
+            .store(in: &cancellables)
+    }
+    
+    // Fetches weather data for recommendation purposes.
     func fetchWeatherForRecommendation(_ cityName: String, completion: @escaping () -> Void) {
         getWeatherDataFromAPI(city: cityName)
             .sink { completionStatus in
@@ -44,7 +73,7 @@ class WeatherViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    
+    // Fetches weather data for displaying on a map.
     func fetchWeatherByCityForMap(_ cityName: String){
         getWeatherDataFromAPI(city: cityName)
             .sink { completion in
@@ -68,7 +97,8 @@ class WeatherViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-        
+    
+    // Fetches weather data for a given city and saves it to Core Data.
     func fetchWeatherForCity(_ cityName: String) {
         getWeatherDataFromAPI(city: cityName)
             .sink { completion in
@@ -106,30 +136,37 @@ class WeatherViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    // Makes a request to the weather API to get the current weather data for a given city.
     func getWeatherDataFromAPI(city: String) -> AnyPublisher<WeatherResponse, Error> {
+        // Headers required for the API request.
         let headers = [
             "X-RapidAPI-Key": "620035982dmshfefc0b106524436p1ef359jsn8f2cb31aa928",
             "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
         ]
         
+        // Encoding the city name to be URL-safe.
         let safeCityString = city.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? city
+        // Construct the API endpoint URL.
         guard let url = URL(string: "https://weatherapi-com.p.rapidapi.com/current.json?q=\(safeCityString)") else {
             print("Failed to create URL.")
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
         }
-        
+        // Prepare API Request.
         var request = URLRequest(url: url, timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
         print("Making request to: \(url)")
         
+        // Perform Request
         return URLSession.shared.dataTaskPublisher(for: request)
             .map(\.data)
+            // Decode the received data into a `WeatherResponse` object.
             .tryMap { data -> WeatherResponse in
                 let decodedResponse = try JSONDecoder().decode(DecodableWeatherResponse.self, from: data)
                 return WeatherResponse(id: UUID(), location: decodedResponse.location, current: decodedResponse.current)
             }
+            // Ensure the result is delivered on the main thread.
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
@@ -171,6 +208,7 @@ class WeatherViewModel: ObservableObject {
         }
     }
     
+    // Updates the ViewModel properties with the provided values.
     func updateWeather(temperature: Double, conditionText: String, location: String, conditionIconURL: URL?) {
         print("Updating weather with: temperature = \(temperature), conditionText = \(conditionText), location = \(location)")
         DispatchQueue.main.async {

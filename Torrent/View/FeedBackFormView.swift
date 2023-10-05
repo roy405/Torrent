@@ -1,39 +1,71 @@
 //
-//  FeedBackFormView.swift
+//  FeedbackFormView.swift
 //  Torrent
 //
-//  Created by Cube on 10/1/23.
+//  Created by Cube on 10/3/23.
 //
 
 import SwiftUI
 
+// Feedback form view that allows users to enter feedback and upon
+// Submit subsequently brings in the current weather based on the city entered
 struct FeedbackFormView: View {
-    @State private var feedbackText: String = ""
-    @Binding var isShowingForm: Bool
-    //@ObservedObject var feedbackViewModel: FeedbackViewModel // Assuming you have a FeedbackViewModel
+    @ObservedObject var feedbackViewModel: FeedbackViewModel
+    @ObservedObject var weatherViewModel = WeatherViewModel() 
+    @Environment(\.presentationMode) var presentationMode
+
+    @State private var city: String = ""
+    @State private var country: String = ""
+    @State private var reportedTemperature: Double = 0
+    @State private var reportedCondition: String = ""
+    @State private var showAlert: Bool = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Submit Your Feedback")
-                .font(.largeTitle)
-                .bold()
-            
-            TextEditor(text: $feedbackText)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(8)
+        NavigationView {
+            Form {
+                Section(header: Text("Your Location")) {
+                    TextField("City", text: $city)
+                    TextField("Country", text: $country)
+                }
 
-            Button("Submit") {
-                //feedbackViewModel.saveFeedback(feedbackText: feedbackText)
-                isShowingForm.toggle()
+                Section(header: Text("Reported Weather")) {
+                    TextField("Temperature", value: $reportedTemperature, formatter: NumberFormatter())
+                    TextField("Condition", text: $reportedCondition)
+                }
+
+                Button("Submit") {
+                    weatherViewModel.fetchWeatherForFeedback(city) {
+                        let actualTemp = self.weatherViewModel.temperature
+                        let actualCond = self.weatherViewModel.conditionText
+
+                        let feedback = FeedbackModel(id: UUID(),
+                                                    city: city,
+                                                     country: country,
+                                                     reportedTemperature: reportedTemperature,
+                                                     reportedCondition: reportedCondition,
+                                                     actualTemperature: actualTemp,
+                                                     actualCondition: actualCond)
+                        feedbackViewModel.saveFeedback(feedback: feedback)
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
             }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
+            .navigationTitle("New Feedback")
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"),
+                      message: Text(feedbackViewModel.errorMessage ?? "Unknown error"),
+                      dismissButton: .default(Text("OK")))
+            }
         }
-        .padding()
+        .onReceive(feedbackViewModel.$errorMessage) { errorMessage in
+            if errorMessage != nil {
+                showAlert = true
+            }
+        }
     }
 }
 
 
+#Preview {
+    FeedbackFormView(feedbackViewModel: FeedbackViewModel())
+}

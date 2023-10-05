@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// View for the main Dashboard or Landing page of the App.
 struct RealTimeWeatherView: View {
     @ObservedObject var viewModel: WeatherViewModel = WeatherViewModel()
     @State private var isShowingCitySearch: Bool = false
@@ -16,6 +17,7 @@ struct RealTimeWeatherView: View {
 
     var body: some View {
         VStack(spacing: 20) {
+            // Calling the CurrentWeatherView here which shows the weather for current location
             CurrentWeatherView(currentWeatherViewModel: currentWeatherViewModel)
                 .padding(.horizontal)
 
@@ -27,6 +29,8 @@ struct RealTimeWeatherView: View {
                         .foregroundColor(.blue)
                 }
                 .sheet(isPresented: $isShowingCitySearch) {
+                    // Lists cities from which if one is selected, the weather of the city is fetched and added
+                    // to the list
                     CitySearchView(weatherViewModel: viewModel, isShowingCitySearch: self.$isShowingCitySearch)
                 }
                 .buttonStyle(PlainButtonStyle())
@@ -81,6 +85,7 @@ struct RealTimeWeatherView: View {
         .navigationTitle("Real-Time Weather")
     }
     
+    // Function to load the Icon for cities added to list
     private func loadWeatherIcon(from url: URL?, for id: UUID) {
         guard let validURL = url else { return }
         var modifiedURL = validURL

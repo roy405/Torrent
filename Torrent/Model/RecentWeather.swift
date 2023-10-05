@@ -7,6 +7,7 @@
 
 import Foundation
 
+// RecentWeather model used to map the recent weather data for each city type selected and displayed in a list
 struct RecentWeather: Identifiable, Hashable{
     var id: UUID?
     var cityName: String

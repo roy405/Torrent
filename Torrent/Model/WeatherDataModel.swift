@@ -7,17 +7,20 @@
 
 import Foundation
 
+// Decodable Weather Response to capture data without UUID
 struct DecodableWeatherResponse: Codable {
     let location: Location
     let current: CurrentWeather
 }
 
+// For the requirement of List views, requires an UUID
 struct WeatherResponse: Codable, Identifiable{
     let id: UUID
     let location: Location
     let current: CurrentWeather
 }
 
+// The Location Model fetched from API
 struct Location: Codable {
     let name: String
     let region: String
@@ -29,6 +32,7 @@ struct Location: Codable {
     let localtime: String
 }
 
+// The CurrentWeather Model fetched from API
 struct CurrentWeather: Codable {
     let last_updated_epoch: Int
     let last_updated: String
@@ -55,6 +59,7 @@ struct CurrentWeather: Codable {
     let gust_kph: Double
 }
 
+// The Condition Model fetched from API
 struct Condition: Codable {
     let text: String
     let icon: String

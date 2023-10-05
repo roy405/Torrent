@@ -7,6 +7,8 @@
 
 import Foundation
 
+// Model for mapping City Data when reading from JSON file (included with Bundle) and then
+// retreiving from CoreData after saving.
 struct CityData: Codable, Identifiable {
     var id: Int32
     var cityname: String

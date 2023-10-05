@@ -10,6 +10,8 @@ import MapKit
 import CoreLocation
 import Combine
 
+// Map view where a pin can be dragged on a city name
+// to show the weather below the pin on small card
 struct WeatherMapView: View {
     // MARK: - PROPERTIES
     @State private var region = MKCoordinateRegion(
@@ -72,6 +74,7 @@ struct WeatherMapView: View {
                     cancellable = Just(())
                         .delay(for: .seconds(3), scheduler: DispatchQueue.main)
                         .sink { _ in
+                            // checking if 3 second delay.
                             if Date().timeIntervalSince(lastUpdate) >= 3 {
                                 // Check if coordinate has changed significantly to warrant a new fetch
                                 if shouldFetchDataFor(newCoordinate: newRegion.center) {
@@ -103,6 +106,7 @@ struct WeatherMapView: View {
         }
     }
 
+    // Function to fetch the city name using geocoding
     func fetchCityName(from coordinate: CLLocationCoordinate2D) {
         let geocoder = CLGeocoder()
         
@@ -122,6 +126,8 @@ struct WeatherMapView: View {
         }
     }
     
+    // Function to determine the sufficient delay before 
+    // city name is fetched to make sure too many api called are not made
     func shouldFetchDataFor(newCoordinate: CLLocationCoordinate2D) -> Bool {
         // Define a threshold for significant location changes
         let threshold: CLLocationDegrees = 0.01 // This is just a small value; you can adjust based on your needs

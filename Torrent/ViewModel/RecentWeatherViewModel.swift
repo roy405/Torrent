@@ -9,50 +9,52 @@ import Foundation
 import CoreData
 
 class RecentWeatherViewModel: ObservableObject {
+    // Published property to keep track of recent weather data
     @Published var recentWeatherData: [RecentWeather] = []
     
+    // Initializer: Sets up the observer to fetch recent weather data when new data is added
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(fetchRecentWeatherFromCoreData), name: NSNotification.Name("NewDataAdded"), object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(fetchRecentWeatherFromCoreData),
+                                               name: NSNotification.Name("NewDataAdded"),
+                                               object: nil)
     }
 
+    // Deinitializer: Removes the observer
     deinit {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("NewDataAdded"), object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: NSNotification.Name("NewDataAdded"),
+                                                  object: nil)
     }
     
+    // Fetches recent weather data from Core Data using PersistenceController
     @objc func fetchRecentWeatherFromCoreData() {
-        let context = PersistenceController.shared.container.viewContext
-        let fetchRequest: NSFetchRequest<RecentWeatherEntity> = RecentWeatherEntity.fetchRequest()
-        
-        do {
-            let fetchedResults = try context.fetch(fetchRequest)
-            // Convert fetched WeatherEntity objects to RecentWeather structs
+        switch PersistenceController.shared.fetchAllWeatherBySelectCity() {
+        case .success(let fetchedResults):
             self.recentWeatherData = fetchedResults.map { RecentWeather(recentWeatherEntity: $0) }
-            print(self.recentWeatherData)
-        } catch {
-            print("Error fetching recent weather from Core Data: \(error)")
+            print(self.recentWeatherData) // For debugging purposes, consider removing for production
+        case .failure(let error):
+            print("Error fetching recent weather: \(error.localizedDescription)")
+            // You can also consider showing an error message to the user here
         }
     }
     
+    // Deletes selected weather data from Core Data and refreshes the data afterward
     func deleteWeather(at offsets: IndexSet) {
-        let context = PersistenceController.shared.container.viewContext
-        
         offsets.forEach { index in
             let weather = self.recentWeatherData[index]
-            
-            // Fetch the managed object to be deleted
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = RecentWeatherEntity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "id == %@", weather.id! as CVarArg)
-            
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            
-            do {
-                try context.execute(deleteRequest)
-                try context.save()
-            } catch {
-                print("Error deleting weather: \(error)")
+            if let id = weather.id {
+                switch PersistenceController.shared.deleteWeatherByCity(withID: id) {
+                case .success:
+                    // Successfully deleted
+                    break
+                case .failure(let error):
+                    print("Error deleting weather: \(error.localizedDescription)")
+                    // You can also consider showing an error message to the user here
+                }
             }
         }
-        
         fetchRecentWeatherFromCoreData()  // Refresh the data after deletion
     }
 }
+

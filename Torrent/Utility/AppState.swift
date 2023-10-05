@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Enum that determines the state of the App
 enum AppState {
     case waitingForPermission
     case permissionDenied

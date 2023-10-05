@@ -7,48 +7,62 @@
 
 import SwiftUI
 
+// The view for recommendations
 struct RecommendationView: View {
     @ObservedObject var recommendationViewModel: RecommendationViewModel
 
     var body: some View {
-        NavigationView {
-            VStack {
-                if let todaysRec = recommendationViewModel.todaysRecommendation {
-                    VStack(spacing: 20) {
-                        Text("Today's Recommendation")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.bottom)
-                        
-                        recommendationRow(recommendation: todaysRec)
-                    }
-                } else {
-                    Text("No recommendation available for today.")
-                        .font(.headline)
-                        .foregroundColor(Color.gray)
-                }
-                Spacer()
-            }
-            .padding()
-            .background(Color(.systemBackground))
-            .navigationBarTitle("Recommendation", displayMode: .inline)
-        }
-        .onAppear {
-            recommendationViewModel.fetchTodaysRecommendation()
-        }
-    }
+           VStack {
+               if let todaysRec = recommendationViewModel.todaysRecommendation {
+                   VStack() {
+                       Text("Today's Recommendation")
+                           .font(.largeTitle)
+                           .fontWeight(.bold)
+                           .padding(.bottom)
+                       
+                       recommendationCard(recommendation: todaysRec)
+                   }
+               } else {
+                   Text("No recommendation available for today.")
+                       .font(.headline)
+                       .foregroundColor(Color.gray)
+               }
+               Spacer()
+           }
+           .padding()
+           .background(Color(.systemBackground))
+           .onAppear {
+               recommendationViewModel.fetchTodaysRecommendation()
+           }
+           .alert(isPresented: Binding<Bool>(
+               get: { self.recommendationViewModel.error != nil },
+               set: { _ in self.recommendationViewModel.error = nil }
+           )) {
+               Alert(title: Text("Error"),
+                     message: Text(self.recommendationViewModel.error ?? "Unknown error"),
+                     dismissButton: .default(Text("OK")))
+           }
+       }
 
-    func recommendationRow(recommendation: Recommendation) -> some View {
+    // Separating the Recommendation Card from the main body.
+    func recommendationCard(recommendation: Recommendation) -> some View {
         VStack(alignment: .leading, spacing: 24) {  // Increased spacing
-            Text(recommendation.recommendation)
-                .font(.title2)
+            let parts = recommendation.recommendation.split(separator: ". ", maxSplits: 1, omittingEmptySubsequences: false)
+            if let firstPart = parts.first {
+                Text(firstPart + ".").bold()
+                    .font(.title2)
+            }
+            if parts.count > 1 {
+                Text(String(parts[1]))
+                    .font(.title2) // Adjust the font as needed
+            }
             
-            Image(systemName: "cloud")
+            Image(systemName: weatherIcon(forRecommendation: recommendation.recommendation))
                 .resizable()
-                .frame(width: 36, height: 36)  // Increased size
+                .scaledToFit() // This ensures the image's aspect ratio is maintained
+                .frame(width: 36)
                 .foregroundColor(Color(.systemBlue))
                 .padding(.bottom)
-
             Text(recommendation.weatherCondition)
                 .font(.headline)
 
@@ -56,12 +70,38 @@ struct RecommendationView: View {
                 .font(.subheadline)
                 .foregroundColor(Color.secondary)
         }
-        .padding(.vertical, 30) // Increased vertical padding for a taller card
+        .padding() // Increased vertical padding for a taller card
         .frame(maxWidth: .infinity)  // Allows the card to take up maximum horizontal space
         .background(Color(.secondarySystemBackground)) // A subtle background color
         .cornerRadius(15)
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5) // Giving depth using shadow
         .padding(.horizontal)
+    }
+    
+    // Switch case to use a proper icon from Apple's SF icons based on the recommendations retrieved from CoreData
+    func weatherIcon(forRecommendation recommendation: String) -> String {
+        if recommendation.contains("scorching hot") {
+            return "thermometer.sun"
+        } else if recommendation.contains("freezing outside") {
+            return "snowflake"
+        } else if recommendation.contains("umbrella") {
+            return "cloud.rain"
+        } else if recommendation.contains("sunny day") {
+            return "sun.max"
+        } else if recommendation.contains("snowing") {
+            return "snow"
+        } else if recommendation.contains("thunderstorm") {
+            return "cloud.bolt.rain"
+        } else if recommendation.contains("fog") {
+            return "cloud.fog"
+        } else if recommendation.contains("overcast") {
+            return "cloud"
+        } else if recommendation.contains("windy") {
+            return "wind"
+        } else if recommendation.contains("partly cloudy") {
+            return "cloud.sun"
+        }
+        return "questionmark.circle" // Default icon for unanticipated conditions
     }
 }
 

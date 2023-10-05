@@ -6,17 +6,28 @@
 //
 
 import CoreLocation
+import Combine
 
+// `LocationManager` is responsible for managing location-related tasks like fetching the user's location and the corresponding weather.
 class LocationManager: NSObject, CLLocationManagerDelegate {
-    
+    // Core location's manager for location updates.
     private var locationManager = CLLocationManager()
+    // A controller responsible for persistence operations, presumably using CoreData.
     private let persistenceController = PersistenceController.shared
+    // ViewModels to manage weather data.
     private let weatherViewModel = WeatherViewModel()
     private let currentWeatherViewModel = CurrentWeatherViewModel()
+    // Timer to schedule periodic location updates.
     private var updateTimer: Timer?
+    // Published property to notify subscribers of the authorization status changes.
     @Published var authorizationStatus: CLAuthorizationStatus?
     
-    // Use this to stop location updates once we have accurate enough data
+    // Combine publishers for publisher/subscriber pattern of exception handling and reporting to users
+    var failedToGetCityNamePublisher = PassthroughSubject<Void, Never>()
+    var locationDeniedErrorPublisher = PassthroughSubject<Void, Never>()
+    var locationRestrictedErrorPublisher = PassthroughSubject<Void, Never>()
+    
+    // Flag to avoid fetching location multiple times.
     private var didFetchLocation: Bool = false
     
     override init() {
@@ -25,49 +36,53 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         self.locationManager.requestWhenInUseAuthorization()
     }
     
+    // Requests the necessary authorization to access the user's location.
     func requestAuthorization() {
         locationManager.requestWhenInUseAuthorization() // or requestAlwaysAuthorization() based on your needs
     }
     
+    // Delegate method called when the authorization status changes.
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
         self.authorizationStatus = status
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            // Now that we have permission, we can start fetching the location
             scheduleLocationUpdate()
-        default:
-            // Handle other cases or inform the user they need to grant location access
+        case .denied:
+            locationDeniedErrorPublisher.send(())
+        case .restricted:
+            locationRestrictedErrorPublisher.send(())
+        case .notDetermined:
+            break
+        @unknown default:
             break
         }
     }
-    
-    
-    private func scheduleLocationUpdate() {
-        // Invalidate any existing timer
-        updateTimer?.invalidate()
         
-        // Schedule a new timer to run every 3 hours
+    // Schedule periodic location updates.
+    private func scheduleLocationUpdate() {
+        updateTimer?.invalidate()
         updateTimer = Timer.scheduledTimer(withTimeInterval: 3 * 60 * 60, repeats: true) { [weak self] _ in
             self?.fetchAndUpdateLocation()
         }
-        
-        // Trigger the first location update immediately
         fetchAndUpdateLocation()
     }
     
+    // Initiates location updates.
     private func fetchAndUpdateLocation() {
         didFetchLocation = false
         locationManager.startUpdatingLocation()
     }
     
+    // Requests for authorization if not determined.
     func checkAndRequestAuthorization() {
         requestAuthorization()
     }
     
+    // Delegate method called when new location data is available.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard !didFetchLocation else {
-            // We have already fetched the location
+            // Locatoin already fetched, so returning
             return
         }
         
@@ -78,6 +93,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    // Processes the obtained location data.
     private func processLocationData(for location: CLLocation) {
         reverseGeocode(location: location) { cityName in
             if let cityName = cityName {
@@ -92,85 +108,80 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
                 self.fetchWeatherData(for: cityName) {
                     
                     // Check for a saved recommendation for the current day
-                    let currentDayRecommendations = self.persistenceController.fetchRecommendationsForToday()
+                    switch self.persistenceController.fetchRecommendationsForToday() {
                     
-                    if currentDayRecommendations.isEmpty {
-                        // No recommendation saved for today.
-                        // Generate a new recommendation using the fetched weather data
-                        let recommendation = self.generateRecommendation(temperature: self.weatherViewModel.temperature, conditionText: self.weatherViewModel.conditionText)
-                        
-                        // Save the new recommendation to persistence
-                        let recommendationToSave = Recommendation(
-                            id: UUID(),
-                            dateAndTime: Date(),
-                            recommendation: recommendation,
-                            weatherCondition: self.weatherViewModel.conditionText
-                        )
-                        self.persistenceController.saveRecommendationToCoreData(recommendation: recommendationToSave)
-                        
-                    } else {
-                        // Recommendation already saved for today
-                        if let todaysRecommendation = currentDayRecommendations.first {
-                            print(todaysRecommendation)
+                    case .success(let currentDayRecommendations):
+                        if currentDayRecommendations.isEmpty {
+                            // No recommendation saved for today.
+                            // Generate a new recommendation using the fetched weather data
+                            let recommendation = self.generateRecommendation(temperature: self.weatherViewModel.temperature, conditionText: self.weatherViewModel.conditionText)
+                            
+                            // Save the new recommendation to persistence
+                            let recommendationToSave = Recommendation(
+                                id: UUID(),
+                                dateAndTime: Date(),
+                                recommendation: recommendation,
+                                weatherCondition: self.weatherViewModel.conditionText
+                            )
+                            switch self.persistenceController.saveRecommendationToCoreData(recommendation: recommendationToSave) {
+                            case .success():
+                                print("Successfully saved recommendation to Core Data.")
+                            case .failure(let saveError):
+                                print("Failed to save recommendation. Error: \(saveError)")
+                            }
+                        } else {
+                            // Recommendation already saved for today
+                            if let todaysRecommendation = currentDayRecommendations.first {
+                                print(todaysRecommendation)
+                            }
                         }
+                        
+                    case .failure(_):
+                        print("Failed to fetch recommendations for today.")
                     }
                 }
             } else {
                 print("Failed to obtain city name from coordinates.")
-                // Handle the scenario where a city name wasn't obtained.
-                // You might want to provide a default behavior or notify the user.
+                self.failedToGetCityNamePublisher.send(())
             }
         }
     }
 
-    private func updateDashboardWeather(weather: WeatherViewModel) {
-        // Your logic to update the weather on the dashboard.
-        // For this example, I'll just print the weather's condition text
-        print("Dashboard Weather Update: \(weather.conditionText)")
-    }
 
-    
+    // Converts the given location into human-readable address details.
     private func reverseGeocode(location: CLLocation, completion: @escaping (String?) -> Void) {
         print(location)
         let geocoder = CLGeocoder()
         geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            if let placemark = placemarks?.first {
-                print("Locality: \(placemark.locality ?? "None")")
-                print("Administrative Area: \(placemark.administrativeArea ?? "None")")
-                print("Sub Locality: \(placemark.subLocality ?? "None")")
-                print("Name: \(placemark.name ?? "None")")
-            }
             if let error = error {
                 print("Failed to get city name: \(error)")
+                self.failedToGetCityNamePublisher.send(())
                 completion(nil)
             } else {
                 let cityName = placemarks?.first?.locality
-                print(cityName ?? "Did not get city name")
                 completion(cityName)
             }
         }
     }
     
-    
+    // Fetches weather data for a given city.
     private func fetchWeatherData(for city: String, completion: @escaping () -> Void) {
         // Using the ViewModel's method to fetch weather
-        print("1 . fetchWeatherDeata is running")
         weatherViewModel.fetchWeatherForRecommendation(city) {
-            
             completion() // This is executed once the weatherViewModel updates its properties with the fetched weather data
         }
     }
     
+    // Fetches current weather data for a given city.
     private func fetchCurrentWeatherData(for city: String, completion: @escaping() -> Void){
-        print("2 . fetchCurrentWeatherData is running")
         currentWeatherViewModel.fetchCurrentWeatherData(for: city){
             completion()
         }
     }
     
+    // Generates a recommendation based on the weather details.
     private func generateRecommendation(temperature: Double, conditionText: String) -> String {
         let baseWeatherText = "Today's weather: \(conditionText). "
-        print("getting reccomm!")
         if temperature > 35 {
             return baseWeatherText + "It's scorching hot! Be careful of bushfires and stay hydrated."
         } else if temperature < 0 {
@@ -195,6 +206,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         return baseWeatherText + "Enjoy your day!"
     }
     
+    // Cancels the timer when the instance is deallocated.
     deinit {
         updateTimer?.invalidate()
     }

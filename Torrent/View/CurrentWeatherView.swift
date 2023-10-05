@@ -7,11 +7,15 @@
 
 import SwiftUI
 
+// View for real time weather at the top of the dashboard
+// Host view is the RealTimeWeatherView
 struct CurrentWeatherView: View {
     @ObservedObject var currentWeatherViewModel: CurrentWeatherViewModel
     @State private var uiImage: UIImage?
     @State private var isLoading: Bool = true // To indicate loading
     @State private var dataUpdated: Bool = false
+    @State private var showErrorAlert: Bool = false
+
 
     var body: some View {
         ZStack { // Using ZStack to potentially add gradient backgrounds or other backgrounds
@@ -48,6 +52,11 @@ struct CurrentWeatherView: View {
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5) // Adding shadows for depth
         .padding(.horizontal)
+        .alert(isPresented: $showErrorAlert) {
+            Alert(title: Text("Error"),
+                  message: Text(currentWeatherViewModel.error?.localizedDescription ?? "Unknown error"),
+                  dismissButton: .default(Text("OK")))
+        }
         .onAppear {
             isLoading = true
             currentWeatherViewModel.fetchWeatherFromCoreData()
@@ -57,8 +66,14 @@ struct CurrentWeatherView: View {
             self.loadWeatherIcon()
             self.dataUpdated.toggle()
         }
+        .onReceive(currentWeatherViewModel.$error) { error in
+            if error != nil {
+                showErrorAlert = true
+            }
+        }
     }
 
+    // Function to load weather icon for the current weather's in user's location
     private func loadWeatherIcon() {
         
         if let currentURLString = currentWeatherViewModel.conditionIconURL?.absoluteString {

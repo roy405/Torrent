@@ -7,8 +7,9 @@
 
 import SwiftUI
 
+// View to display the list of all cities
 struct CitySearchView: View {
-    @ObservedObject var cityViewModel: CityViewModel = CityViewModel(context: PersistenceController.shared.container.viewContext)
+    @ObservedObject var cityViewModel: CityViewModel = CityViewModel()
     @ObservedObject var weatherViewModel: WeatherViewModel
     
     @State private var searchQuery: String = ""
@@ -54,10 +55,21 @@ struct CitySearchView: View {
             })  // Added a 'Done' button for easier modal dismissal
         }
         .onAppear {
-            cityViewModel.fetchCitiesFromCoreData()
+            cityViewModel.fetchCities()
+        }
+        .alert(isPresented: Binding<Bool>(
+            get: { self.cityViewModel.error != nil },
+            set: { _ in self.cityViewModel.error = nil }  // Reset the error once it's been shown
+        )) {
+            Alert(
+                title: Text("Error"),
+                message: Text(cityViewModel.error?.localizedDescription ?? "Unknown Error"),
+                dismissButton: .default(Text("OK"))
+            )
         }
     }
 }
+
 
 struct CitySearchView_Previews: PreviewProvider {
     static var previews: some View {

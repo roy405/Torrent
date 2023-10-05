@@ -51,7 +51,7 @@ struct ContentView: View {
             .tag(1)
 
             // Real weather feedback tab
-            Text("Real Weather Feedback Placeholder")
+            FeedbackMainView()
                 .tabItem {
                     VStack {
                         Image(systemName: "cloud.rain.fill") // Filled version for clarity
