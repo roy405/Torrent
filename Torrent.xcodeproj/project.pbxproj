@@ -23,6 +23,8 @@
 		1C646C352AC4252E00AB1610 /* cities.json in Resources */ = {isa = PBXBuildFile; fileRef = 1C646C342AC4252E00AB1610 /* cities.json */; };
 		1C646C372AC4803A00AB1610 /* RecentWeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C362AC4803A00AB1610 /* RecentWeatherViewModel.swift */; };
 		1C646C392AC480B600AB1610 /* RecentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C646C382AC480B600AB1610 /* RecentWeather.swift */; };
+		1C9E03222AD1C29D008EA482 /* WeatherError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9E03212AD1C29D008EA482 /* WeatherError.swift */; };
+		1C9E032A2AD2D3F8008EA482 /* TorrentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9E03292AD2D3F8008EA482 /* TorrentTests.swift */; };
 		1CBD74C92AC6F1B90026E57C /* WeatherMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD74C82AC6F1B90026E57C /* WeatherMapView.swift */; };
 		1CBD74CD2AC6F8B10026E57C /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBD74CC2AC6F8B10026E57C /* LocationManager.swift */; };
 		1CBD74D02AC87CA90026E57C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBD74CF2AC87CA90026E57C /* CoreLocation.framework */; };
@@ -39,6 +41,16 @@
 		1CD054922ACB0C9E00EBDBFA /* FeedbackFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD054912ACB0C9E00EBDBFA /* FeedbackFormView.swift */; };
 		1CD054942ACD8A7A00EBDBFA /* CoreDataError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD054932ACD8A7A00EBDBFA /* CoreDataError.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1C9E032B2AD2D3F8008EA482 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C646BF72AC3286F00AB1610 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1C646BFE2AC3286F00AB1610;
+			remoteInfo = Torrent;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1C646BFF2AC3286F00AB1610 /* Torrent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Torrent.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +72,9 @@
 		1C646C342AC4252E00AB1610 /* cities.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cities.json; sourceTree = "<group>"; };
 		1C646C362AC4803A00AB1610 /* RecentWeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentWeatherViewModel.swift; sourceTree = "<group>"; };
 		1C646C382AC480B600AB1610 /* RecentWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentWeather.swift; sourceTree = "<group>"; };
+		1C9E03212AD1C29D008EA482 /* WeatherError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherError.swift; sourceTree = "<group>"; };
+		1C9E03272AD2D3F8008EA482 /* TorrentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TorrentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C9E03292AD2D3F8008EA482 /* TorrentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TorrentTests.swift; sourceTree = "<group>"; };
 		1CBD74C82AC6F1B90026E57C /* WeatherMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherMapView.swift; sourceTree = "<group>"; };
 		1CBD74CC2AC6F8B10026E57C /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		1CBD74CF2AC87CA90026E57C /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -86,6 +101,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1C9E03242AD2D3F8008EA482 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -93,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				1C646C012AC3286F00AB1610 /* Torrent */,
+				1C9E03282AD2D3F8008EA482 /* TorrentTests */,
 				1C646C002AC3286F00AB1610 /* Products */,
 				1CBD74CE2AC87CA90026E57C /* Frameworks */,
 			);
@@ -102,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				1C646BFF2AC3286F00AB1610 /* Torrent.app */,
+				1C9E03272AD2D3F8008EA482 /* TorrentTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,8 +205,17 @@
 				1CBD74CC2AC6F8B10026E57C /* LocationManager.swift */,
 				1CD054852ACADEDE00EBDBFA /* AppState.swift */,
 				1CD054932ACD8A7A00EBDBFA /* CoreDataError.swift */,
+				1C9E03212AD1C29D008EA482 /* WeatherError.swift */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		1C9E03282AD2D3F8008EA482 /* TorrentTests */ = {
+			isa = PBXGroup;
+			children = (
+				1C9E03292AD2D3F8008EA482 /* TorrentTests.swift */,
+			);
+			path = TorrentTests;
 			sourceTree = "<group>";
 		};
 		1CBD74CE2AC87CA90026E57C /* Frameworks */ = {
@@ -213,6 +246,24 @@
 			productReference = 1C646BFF2AC3286F00AB1610 /* Torrent.app */;
 			productType = "com.apple.product-type.application";
 		};
+		1C9E03262AD2D3F8008EA482 /* TorrentTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C9E032D2AD2D3F8008EA482 /* Build configuration list for PBXNativeTarget "TorrentTests" */;
+			buildPhases = (
+				1C9E03232AD2D3F8008EA482 /* Sources */,
+				1C9E03242AD2D3F8008EA482 /* Frameworks */,
+				1C9E03252AD2D3F8008EA482 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1C9E032C2AD2D3F8008EA482 /* PBXTargetDependency */,
+			);
+			name = TorrentTests;
+			productName = TorrentTests;
+			productReference = 1C9E03272AD2D3F8008EA482 /* TorrentTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -225,6 +276,10 @@
 				TargetAttributes = {
 					1C646BFE2AC3286F00AB1610 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					1C9E03262AD2D3F8008EA482 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = 1C646BFE2AC3286F00AB1610;
 					};
 				};
 			};
@@ -242,6 +297,7 @@
 			projectRoot = "";
 			targets = (
 				1C646BFE2AC3286F00AB1610 /* Torrent */,
+				1C9E03262AD2D3F8008EA482 /* TorrentTests */,
 			);
 		};
 /* End PBXProject section */
@@ -254,6 +310,13 @@
 				1C646C352AC4252E00AB1610 /* cities.json in Resources */,
 				1C646C0A2AC3287000AB1610 /* Preview Assets.xcassets in Resources */,
 				1C646C072AC3287000AB1610 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C9E03252AD2D3F8008EA482 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,10 +354,27 @@
 				1C646C0F2AC3287000AB1610 /* Torrent.xcdatamodeld in Sources */,
 				1C646C032AC3286F00AB1610 /* TorrentApp.swift in Sources */,
 				1CD054822ACAA8F000EBDBFA /* CurrentWeatherViewModel.swift in Sources */,
+				1C9E03222AD1C29D008EA482 /* WeatherError.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C9E03232AD2D3F8008EA482 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C9E032A2AD2D3F8008EA482 /* TorrentTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1C9E032C2AD2D3F8008EA482 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1C646BFE2AC3286F00AB1610 /* Torrent */;
+			targetProxy = 1C9E032B2AD2D3F8008EA482 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1C646C122AC3287000AB1610 /* Debug */ = {
@@ -482,6 +562,42 @@
 			};
 			name = Release;
 		};
+		1C9E032E2AD2D3F8008EA482 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5GZC5WLRP3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.14358081.TorrentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Torrent.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Torrent";
+			};
+			name = Debug;
+		};
+		1C9E032F2AD2D3F8008EA482 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5GZC5WLRP3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.14358081.TorrentTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Torrent.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Torrent";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -499,6 +615,15 @@
 			buildConfigurations = (
 				1C646C152AC3287000AB1610 /* Debug */,
 				1C646C162AC3287000AB1610 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1C9E032D2AD2D3F8008EA482 /* Build configuration list for PBXNativeTarget "TorrentTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C9E032E2AD2D3F8008EA482 /* Debug */,
+				1C9E032F2AD2D3F8008EA482 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

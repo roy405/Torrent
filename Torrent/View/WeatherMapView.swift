@@ -24,6 +24,13 @@ struct WeatherMapView: View {
     @State private var lastFetchedCoordinate: CLLocationCoordinate2D?
     @ObservedObject var weatherViewModel = WeatherViewModel()
     @Binding var isShowingMap: Bool
+    
+    var showErrorAlert: Binding<Bool> {
+        Binding<Bool>(
+            get: { self.weatherViewModel.currentError != nil },
+            set: { if !$0 { self.weatherViewModel.currentError = nil } }
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -84,6 +91,13 @@ struct WeatherMapView: View {
                         }
                 }
                 .navigationTitle(cityName)
+                .alert(isPresented: showErrorAlert) {
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(weatherViewModel.currentError?.errorDescription ?? "Unknown error"),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             }
             
             // Close button outside of NavigationView
@@ -132,7 +146,7 @@ struct WeatherMapView: View {
         // Define a threshold for significant location changes
         let threshold: CLLocationDegrees = 0.01 // This is just a small value; you can adjust based on your needs
 
-        // If we haven't fetched before, then proceed
+        // If not fetched before, then proceed
         guard let lastCoordinate = lastFetchedCoordinate else {
             lastFetchedCoordinate = newCoordinate
             return true

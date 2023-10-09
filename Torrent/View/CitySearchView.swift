@@ -41,7 +41,7 @@ struct CitySearchView: View {
                         self.isShowingCitySearch = false
                     }) {
                         Text(city.cityname)
-                            .font(.headline)  // Increased font weight for better readability
+                            .font(.headline)
                     }
                 }
                 .listStyle(PlainListStyle())
@@ -52,7 +52,7 @@ struct CitySearchView: View {
             }) {
                 Text("Done")
                     .fontWeight(.semibold)
-            })  // Added a 'Done' button for easier modal dismissal
+            })
         }
         .onAppear {
             cityViewModel.fetchCities()

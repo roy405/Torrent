@@ -15,16 +15,18 @@ struct FeedbackMainView: View {
 
     var body: some View {
         NavigationView {
-            List(feedbackViewModel.feedbacks) { feedback in
-                VStack(alignment: .leading) {
-                    Text("City: ").bold() + Text("\(feedback.city)")
-                    Text("Country: ").bold() + Text("\(feedback.country)")
-                    Text("Reported Temperature: ").bold() + Text("\(feedback.reportedTemperature)°")
-                    Text("Reported Condition: ").bold() + Text("\(feedback.reportedCondition)")
-                    Text("Actual Temperature: ").bold() + Text(String(format: "%.2f", feedback.actualTemperature) + "°")
-                    Text("Actual Condition: ").bold() + Text("\(feedback.actualCondition)")
-
+            List {
+                ForEach(feedbackViewModel.feedbacks) { feedback in
+                    VStack(alignment: .leading) {
+                        Text("City: ").bold() + Text("\(feedback.city)")
+                        Text("Country: ").bold() + Text("\(feedback.country)")
+                        Text("Reported Temperature: ").bold() + Text(String(format: "%.2f", feedback.reportedTemperature) + "°")
+                        Text("Reported Condition: ").bold() + Text("\(feedback.reportedCondition)")
+                        Text("Actual Temperature: ").bold() + Text(String(format: "%.2f", feedback.actualTemperature) + "°")
+                        Text("Actual Condition: ").bold() + Text("\(feedback.actualCondition)")
+                    }
                 }
+                .onDelete(perform: deleteFeedback)
             }
             .navigationTitle("Feedbacks History")
             .navigationBarItems(trailing: Button(action: {
@@ -51,7 +53,17 @@ struct FeedbackMainView: View {
             }
         }
     }
+
+    // Implementing the delete functionality
+    func deleteFeedback(at offsets: IndexSet) {
+        // Extract feedback to delete from the index set
+        let feedbacksToDelete = offsets.map { feedbackViewModel.feedbacks[$0] }
+        for feedback in feedbacksToDelete {
+            feedbackViewModel.deleteFeedback(feedback: feedback)
+        }
+    }
 }
+
 
 
 #Preview {

@@ -8,47 +8,52 @@
 import Foundation
 import CoreData
 
+// ViewModel for managing Feedback-related data and operations.
 class FeedbackViewModel: ObservableObject {
+
+    // List of all feedbacks.
     @Published var feedbacks: [FeedbackModel] = []
+
+    // Holds an error message, if any error occurs.
     @Published var errorMessage: String?
 
-    
-    let persistenceController = PersistenceController.shared
-
+    // Saves a feedback to Core Data and updates the list of feedbacks.
     func saveFeedback(feedback: FeedbackModel) {
-        switch persistenceController.saveFeedbackToCoreData(feedback: feedback) {
+        switch PersistenceController.shared.saveFeedbackToCoreData(feedback: feedback) {
         case .success():
-            // After saving, update the feedbacks array
+            // Successful save, hence fetch all feedbacks to refresh the list.
             fetchAllFeedbacks()
         case .failure(let error):
-            // Handle or print the error
+            // Handle the error by setting it to the errorMessage property and printing.
             self.errorMessage = error.localizedDescription
             print("Error saving feedback: \(error)")
         }
     }
 
+    // Fetches all feedbacks from Core Data and updates the published list of feedbacks.
     func fetchAllFeedbacks() {
-        switch persistenceController.fetchAllFeedbacks() {
+        switch PersistenceController.shared.fetchAllFeedbacks() {
         case .success(let feedbacksList):
+            // Update the list of feedbacks.
             self.feedbacks = feedbacksList
         case .failure(let error):
-            // Handle or print the error
+            // Handle the error by setting it to the errorMessage property and printing.
             self.errorMessage = error.localizedDescription
             print("Error fetching all feedbacks: \(error)")
         }
     }
 
-
-    // If you also want to use the delete feedback function
+    // Deletes a specific feedback from Core Data and updates the list of feedbacks.
     func deleteFeedback(feedback: FeedbackModel) {
-        switch persistenceController.deleteFeedback(feedback: feedback) {
+        switch PersistenceController.shared.deleteFeedback(feedback: feedback) {
         case .success():
-            // After deleting, you might want to update the feedbacks array again
+            // Successful deletion, hence fetch all feedbacks to refresh the list.
             fetchAllFeedbacks()
         case .failure(let error):
-            // Handle or print the error
+            // Handle the error by setting it to the errorMessage property and printing.
             self.errorMessage = error.localizedDescription
             print("Error deleting feedback: \(error)")
         }
     }
 }
+

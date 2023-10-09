@@ -37,7 +37,6 @@ struct PersistenceController {
     func saveCitiesToCoreData(_ cities: [CityData]) -> Result<Void, Error> {
         let context = container.newBackgroundContext()
         var result: Result<Void, Error> = .success(())
-        
         context.performAndWait { // using performAndWait to ensure that result is set before the function returns
             for city in cities {
                 let cityEntity = CityEntity(context: context)
@@ -96,23 +95,24 @@ struct PersistenceController {
     
     // Deletes a Recent Weather for a selected city from Core Data
     func deleteWeatherByCity(withID id: UUID) -> Result<Void, Error> {
-        let context = container.viewContext
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = RecentWeatherEntity.fetchRequest()
+        let fetchRequest: NSFetchRequest<RecentWeatherEntity> = RecentWeatherEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-            return .success(())
-        } catch {
-            print("Error deleting weather: \(error)")
-            return .failure(CoreDataError.recentWeatherForCityDeleteError)
+        if let result = try? container.viewContext.fetch(fetchRequest),
+           let weatherEntity = result.first {
+            container.viewContext.delete(weatherEntity)
+            do {
+                try container.viewContext.save()
+                return .success(())
+            } catch {
+                print("Failed to delete weather: \(error)")
+                return .failure(CoreDataError.recentWeatherForCityDeleteError)
+            }
+        } else {
+            return .failure(CoreDataError.recentWeatherForCityFetchError)
         }
     }
 
-    
 
     // Saves a single recommendation to CoreData.
     func saveRecommendationToCoreData(recommendation: Recommendation) -> Result<Void, Error> {
@@ -136,7 +136,6 @@ struct PersistenceController {
                 }
             }
         }
-        
         return result
     }
     
@@ -265,7 +264,7 @@ struct PersistenceController {
         }
     }
     
-    // Deletes a certain feedback from the list
+    // Deletes a certain feedback from the list -> uses a
     func deleteFeedback(feedback: FeedbackModel) -> Result<Void, Error> {
         let fetchRequest: NSFetchRequest<FeedbackEntity> = FeedbackEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", feedback.id as CVarArg)

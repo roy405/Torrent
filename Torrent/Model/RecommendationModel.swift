@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 // Recommendation model to map recommendation data
 struct Recommendation {
     public var id: UUID

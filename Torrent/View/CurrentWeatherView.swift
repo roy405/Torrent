@@ -18,7 +18,7 @@ struct CurrentWeatherView: View {
 
 
     var body: some View {
-        ZStack { // Using ZStack to potentially add gradient backgrounds or other backgrounds
+        ZStack { 
             LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.white]), startPoint: .topLeading, endPoint: .bottomTrailing) // Example gradient
                 .cornerRadius(12)
 
@@ -27,9 +27,9 @@ struct CurrentWeatherView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 80, height: 80) // Making the image slightly larger
+                        .frame(width: 80, height: 80)
                 } else if isLoading {
-                    ProgressView() // Using a loader while fetching the image
+                    ProgressView()
                         .frame(width: 80, height: 80)
                 }
 
@@ -50,7 +50,7 @@ struct CurrentWeatherView: View {
         }
         .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5) // Adding shadows for depth
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         .padding(.horizontal)
         .alert(isPresented: $showErrorAlert) {
             Alert(title: Text("Error"),

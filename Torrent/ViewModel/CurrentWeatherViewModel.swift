@@ -8,19 +8,23 @@
 import Foundation
 import Combine
 
-
+// ViewModel responsible for managing CurrentWeather-related data and operations.
 class CurrentWeatherViewModel: ObservableObject {
     
-    @Published var temperature: Double = 0.0 
+    // Published properties for the UI to bind to.
+    @Published var temperature: Double = 0.0
     @Published var conditionText: String = ""
     @Published var location: String = ""
     @Published var conditionIconURL: URL?
     @Published var fetchedFromCoreData: Bool = false
     
+    // Property to store any errors that may occur during operations.
     @Published var error: Error?
     
+    // A cancellable object that represents a type-erased cancellable instance.
     private var cancellable: AnyCancellable?
     
+    // Fetches current weather data for a given city from the API.
     func fetchCurrentWeatherData(for city: String, completion: @escaping () -> Void) {
         cancellable = getCurrentWeatherDataFromAPI(city: city)
             .sink(receiveCompletion: { completion in
@@ -29,10 +33,9 @@ class CurrentWeatherViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     print("Error fetching weather: \(error)")
-                    self.error = error  // Set the error property
+                    self.error = error  // Store the occurred error
                 }
             }, receiveValue: { response in
-                // Updated: Using the new function to update UI
                 self.updateUI(
                     temperature: response.current.temp_c,
                     conditionText: response.current.condition.text,
@@ -44,6 +47,7 @@ class CurrentWeatherViewModel: ObservableObject {
             })
     }
 
+    // Updates the UI elements with the provided weather data.
     private func updateUI(temperature: Double, conditionText: String, location: String, iconURL: URL?) {
         self.temperature = temperature
         self.conditionText = conditionText
@@ -51,7 +55,7 @@ class CurrentWeatherViewModel: ObservableObject {
         self.conditionIconURL = iconURL
     }
     
-    // Makes a request to the weather API to get the current weather data for a given city.
+    // Makes an API request to fetch current weather data for a provided city.
     private func getCurrentWeatherDataFromAPI(city: String) -> AnyPublisher<WeatherResponse, Error> {
         // Headers required for the API request.
         let headers = [

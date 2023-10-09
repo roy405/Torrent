@@ -19,6 +19,9 @@ class WeatherViewModel: ObservableObject {
     @Published var latitude: Double = 0.0
     @Published var longitude: Double = 0.0
     
+    // Variable for weather error
+    @Published var currentError: WeatherError?
+    
     // A collection of AnyCancellable instances that represent active publisher subscriptions.
     var cancellables: Set<AnyCancellable> = []
     
@@ -30,7 +33,11 @@ class WeatherViewModel: ObservableObject {
                 case.finished:
                     print("Completed Successsfully.")
                 case.failure(let error):
-                    print("Failed with error: \(error)")
+                    if let weatherError = error as? WeatherError {
+                        self.currentError = weatherError
+                    } else {
+                        self.currentError = .weatherFeedbackFetchError 
+                    }
                 }
             } receiveValue: { weather in
                 print("Received weather data: \(weather)")
@@ -55,7 +62,11 @@ class WeatherViewModel: ObservableObject {
                 case .finished:
                     print("Completed successfully.")
                 case .failure(let error):
-                    print("Failed with error: \(error)")
+                    if let weatherError = error as? WeatherError {
+                        self.currentError = weatherError
+                    } else {
+                        self.currentError = .weatherRecommendationFetchError
+                    }
                 }
             } receiveValue: { weather in
                 print("Received weather data: \(weather)")
@@ -81,7 +92,11 @@ class WeatherViewModel: ObservableObject {
                 case .finished:
                     print("Completed successfully.")
                 case .failure(let error):
-                    print("Failed with error: \(error)")
+                    if let weatherError = error as? WeatherError {
+                        self.currentError = weatherError
+                    } else {
+                        self.currentError = .weatherCityFetchError
+                    }
                 }
             } receiveValue: { weather in
                 print("Received weather data: \(weather)")
@@ -106,7 +121,11 @@ class WeatherViewModel: ObservableObject {
                 case .finished:
                     print("Completed successfully.")
                 case .failure(let error):
-                    print("Failed with error: \(error)")
+                    if let weatherError = error as? WeatherError {
+                        self.currentError = weatherError
+                    } else {
+                        self.currentError = .weatherCityMapFetchError
+                    }
                 }
             } receiveValue: { weather in
                 print("Received weather data: \(weather)")
@@ -149,7 +168,7 @@ class WeatherViewModel: ObservableObject {
         // Construct the API endpoint URL.
         guard let url = URL(string: "https://weatherapi-com.p.rapidapi.com/current.json?q=\(safeCityString)") else {
             print("Failed to create URL.")
-            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+            return Fail(error: WeatherError.urlCreation).eraseToAnyPublisher()
         }
         // Prepare API Request.
         var request = URLRequest(url: url, timeoutInterval: 10.0)
@@ -205,6 +224,7 @@ class WeatherViewModel: ObservableObject {
             NotificationCenter.default.post(name: NSNotification.Name("NewDataAdded"), object: nil)
         } catch {
             print("Error saving or fetching weather from Core Data: \(error)")
+            currentError = .coreData
         }
     }
     

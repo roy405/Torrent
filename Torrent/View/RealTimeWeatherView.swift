@@ -14,6 +14,20 @@ struct RealTimeWeatherView: View {
     @ObservedObject var recentWeatherViewModel = RecentWeatherViewModel()
     @ObservedObject var currentWeatherViewModel = CurrentWeatherViewModel()
     @State private var imagesDict: [UUID: UIImage] = [:] // Dictionary to hold images
+    
+    var showErrorAlert: Binding<Bool> {
+        Binding<Bool>(
+            get: { self.recentWeatherViewModel.lastError != nil },
+            set: { if !$0 { self.recentWeatherViewModel.lastError = nil } }
+        )
+    }
+    
+    var showWeatherErrorAlert: Binding<Bool> {
+        Binding<Bool>(
+            get: { self.viewModel.currentError != nil },
+            set: { if !$0 { self.viewModel.currentError = nil } }
+        )
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -83,6 +97,16 @@ struct RealTimeWeatherView: View {
             recentWeatherViewModel.fetchRecentWeatherFromCoreData()
         }
         .navigationTitle("Real-Time Weather")
+        .alert(isPresented: showErrorAlert) { // Alert modifier
+            Alert(title: Text("Error"),
+                  message: Text(recentWeatherViewModel.lastError?.errorDescription ?? "Unknown error"),
+                  dismissButton: .default(Text("OK")))
+        }
+        .alert(isPresented: showWeatherErrorAlert) {
+            Alert(title: Text("Error"),
+                  message: Text(viewModel.currentError?.errorDescription ?? "Unknown error"),
+                  dismissButton: .default(Text("OK")))
+        }
     }
     
     // Function to load the Icon for cities added to list

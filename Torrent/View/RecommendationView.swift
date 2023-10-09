@@ -54,12 +54,12 @@ struct RecommendationView: View {
             }
             if parts.count > 1 {
                 Text(String(parts[1]))
-                    .font(.title2) // Adjust the font as needed
+                    .font(.title2)
             }
             
             Image(systemName: weatherIcon(forRecommendation: recommendation.recommendation))
                 .resizable()
-                .scaledToFit() // This ensures the image's aspect ratio is maintained
+                .scaledToFit()
                 .frame(width: 36)
                 .foregroundColor(Color(.systemBlue))
                 .padding(.bottom)
@@ -70,11 +70,11 @@ struct RecommendationView: View {
                 .font(.subheadline)
                 .foregroundColor(Color.secondary)
         }
-        .padding() // Increased vertical padding for a taller card
-        .frame(maxWidth: .infinity)  // Allows the card to take up maximum horizontal space
-        .background(Color(.secondarySystemBackground)) // A subtle background color
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color(.secondarySystemBackground))
         .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5) // Giving depth using shadow
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
         .padding(.horizontal)
     }
     
@@ -100,6 +100,8 @@ struct RecommendationView: View {
             return "wind"
         } else if recommendation.contains("partly cloudy") {
             return "cloud.sun"
+        } else if recommendation.contains("clear") {
+            return "sun.max"
         }
         return "questionmark.circle" // Default icon for unanticipated conditions
     }
