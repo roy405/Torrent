@@ -17,6 +17,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     // ViewModels to manage weather data.
     private let weatherViewModel = WeatherViewModel()
     private let currentWeatherViewModel = CurrentWeatherViewModel()
+    private let forecastViewModel = ForecastViewModel(persistenceController: PersistenceController())
     // Timer to schedule periodic location updates.
     private var updateTimer: Timer?
     // Published property to notify subscribers of the authorization status changes.
@@ -29,6 +30,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     // Flag to avoid fetching location multiple times.
     private var didFetchLocation: Bool = false
+    
+    private var cancellables: Set<AnyCancellable> = []
+
     
     override init() {
         super.init()
@@ -44,13 +48,16 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     // Delegate method called when the authorization status changes.
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
+        print("Authorization status changed to: \(status)")
         self.authorizationStatus = status
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
             scheduleLocationUpdate()
         case .denied:
+            print("Sending denied event.")
             locationDeniedErrorPublisher.send(())
         case .restricted:
+            print("Sending restricted event.")
             locationRestrictedErrorPublisher.send(())
         case .notDetermined:
             break
@@ -140,6 +147,22 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
                         print("Failed to fetch recommendations for today.")
                     }
                 }
+                
+                // Fetching weather forecast data using the city name
+ 
+                let _ = self.forecastViewModel.getWeatherForecastData(city: cityName)
+                    .sink(
+                        receiveCompletion: { completion in
+                            switch completion {
+                            case .finished:
+                                print("Finished fetching and saving forecast data.")
+                            case .failure(let error):
+                                print("Failed: \(error)")
+                            }
+                        },
+                        receiveValue: {}
+                    )
+                    .store(in: &self.cancellables)
             } else {
                 print("Failed to obtain city name from coordinates.")
                 self.failedToGetCityNamePublisher.send(())

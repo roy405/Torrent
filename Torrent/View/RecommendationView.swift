@@ -12,63 +12,64 @@ struct RecommendationView: View {
     @ObservedObject var recommendationViewModel: RecommendationViewModel
 
     var body: some View {
-           VStack {
-               if let todaysRec = recommendationViewModel.todaysRecommendation {
-                   VStack() {
-                       Text("Today's Recommendation")
-                           .font(.largeTitle)
-                           .fontWeight(.bold)
-                           .padding(.bottom)
-                       
-                       recommendationCard(recommendation: todaysRec)
-                   }
-               } else {
-                   Text("No recommendation available for today.")
-                       .font(.headline)
-                       .foregroundColor(Color.gray)
-               }
-               Spacer()
-           }
-           .padding()
-           .background(Color(.systemBackground))
-           .onAppear {
-               recommendationViewModel.fetchTodaysRecommendation()
-           }
-           .alert(isPresented: Binding<Bool>(
-               get: { self.recommendationViewModel.error != nil },
-               set: { _ in self.recommendationViewModel.error = nil }
-           )) {
-               Alert(title: Text("Error"),
-                     message: Text(self.recommendationViewModel.error ?? "Unknown error"),
-                     dismissButton: .default(Text("OK")))
-           }
-       }
+        VStack(spacing: 20) {
+            Text("Today's Recommendation")
+                .font(.largeTitle)
+                .fontWeight(.bold)
 
+            if let todaysRec = recommendationViewModel.todaysRecommendation {
+                recommendationCard(recommendation: todaysRec)
+            } else {
+                Text("No recommendation available for today.")
+                    .font(.headline)
+                    .foregroundColor(Color.gray)
+            }
+            Spacer()
+        }
+        .padding(.top)
+        .background(Color(.systemBackground))
+        .onAppear {
+            recommendationViewModel.fetchTodaysRecommendation()
+        }
+        .alert(isPresented: Binding<Bool>(
+            get: { self.recommendationViewModel.error != nil },
+            set: { _ in self.recommendationViewModel.error = nil }
+        )) {
+            Alert(title: Text("Error"),
+                  message: Text(self.recommendationViewModel.error ?? "Unknown error"),
+                  dismissButton: .default(Text("OK")))
+        }
+    }
+    
     // Separating the Recommendation Card from the main body.
     func recommendationCard(recommendation: Recommendation) -> some View {
-        VStack(alignment: .leading, spacing: 24) {  // Increased spacing
+        VStack(alignment: .leading, spacing: 15) {
             let parts = recommendation.recommendation.split(separator: ". ", maxSplits: 1, omittingEmptySubsequences: false)
             if let firstPart = parts.first {
-                Text(firstPart + ".").bold()
+                Text(firstPart + ".")
                     .font(.title2)
+                    .bold()
             }
             if parts.count > 1 {
                 Text(String(parts[1]))
-                    .font(.title2)
+                    .font(.body)
+                    .opacity(0.7)
             }
-            
-            Image(systemName: weatherIcon(forRecommendation: recommendation.recommendation))
-                .resizable()
-                .scaledToFit()
-                .frame(width: 36)
-                .foregroundColor(Color(.systemBlue))
-                .padding(.bottom)
-            Text(recommendation.weatherCondition)
-                .font(.headline)
+
+            HStack(spacing: 10) {
+                Image(systemName: weatherIcon(forRecommendation: recommendation.recommendation))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20)
+                    .foregroundColor(Color(.systemBlue))
+                Text(recommendation.weatherCondition)
+                    .font(.headline)
+            }
 
             Text("\(recommendation.dateAndTime, style: .date)")
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundColor(Color.secondary)
+                .padding(.top, 8)
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -100,7 +101,7 @@ struct RecommendationView: View {
             return "wind"
         } else if recommendation.contains("partly cloudy") {
             return "cloud.sun"
-        } else if recommendation.contains("clear") {
+        } else if recommendation.contains("Clear") {
             return "sun.max"
         }
         return "questionmark.circle" // Default icon for unanticipated conditions

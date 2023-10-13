@@ -17,14 +17,39 @@ struct FeedbackMainView: View {
         NavigationView {
             List {
                 ForEach(feedbackViewModel.feedbacks) { feedback in
-                    VStack(alignment: .leading) {
-                        Text("City: ").bold() + Text("\(feedback.city)")
-                        Text("Country: ").bold() + Text("\(feedback.country)")
-                        Text("Reported Temperature: ").bold() + Text(String(format: "%.2f", feedback.reportedTemperature) + "°")
-                        Text("Reported Condition: ").bold() + Text("\(feedback.reportedCondition)")
-                        Text("Actual Temperature: ").bold() + Text(String(format: "%.2f", feedback.actualTemperature) + "°")
-                        Text("Actual Condition: ").bold() + Text("\(feedback.actualCondition)")
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("City:").bold()
+                            Spacer()
+                            Text("\(feedback.city)")
+                        }
+                        HStack {
+                            Text("Country:").bold()
+                            Spacer()
+                            Text("\(feedback.country)")
+                        }
+                        HStack {
+                            Text("Reported Temp:").bold()
+                            Spacer()
+                            Text(String(format: "%.2f", feedback.reportedTemperature) + "°")
+                        }
+                        HStack {
+                            Text("Reported Condition:").bold()
+                            Spacer()
+                            Text("\(feedback.reportedCondition)")
+                        }
+                        HStack {
+                            Text("Actual Temp:").bold()
+                            Spacer()
+                            Text(String(format: "%.2f", feedback.actualTemperature) + "°")
+                        }
+                        HStack {
+                            Text("Actual Condition:").bold()
+                            Spacer()
+                            Text("\(feedback.actualCondition)")
+                        }
                     }
+                    .padding(.vertical, 8)
                 }
                 .onDelete(perform: deleteFeedback)
             }

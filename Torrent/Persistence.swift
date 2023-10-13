@@ -13,7 +13,7 @@ struct PersistenceController {
     static let shared = PersistenceController()
     
     // Container for the Core Data stack.
-    let container: NSPersistentCloudKitContainer
+    var container: NSPersistentCloudKitContainer
     
     // Initializer for Persistence class
     init(inMemory: Bool = false) {
@@ -281,6 +281,102 @@ struct PersistenceController {
             }
         } else {
             return .failure(CoreDataError.feedbackFetchErrorDuringDeletion)
+        }
+    }
+    
+    // Saves ForeCast data where a single location maps to 3 days (instances) of forecasts
+    func saveForecastData(location: ForecastLocation, forecasts: [Forecast]) -> Result<Void, Error> {
+        let context = container.newBackgroundContext()
+        var result: Result<Void, Error> = .success(())
+        
+        context.performAndWait {
+            let fetchLocationRequest: NSFetchRequest<ForecastLocationEntity> = ForecastLocationEntity.fetchRequest()
+            fetchLocationRequest.predicate = NSPredicate(format: "name == %@", location.name)
+            
+            do {
+                let locations = try context.fetch(fetchLocationRequest)
+                                
+                let locationEntity: ForecastLocationEntity
+                if let existingLocation = locations.first {
+                    locationEntity = existingLocation
+                } else {
+                    locationEntity = ForecastLocationEntity(context: context)
+                    locationEntity.name = location.name
+                    locationEntity.region = location.region
+                    locationEntity.country = location.country
+                    locationEntity.lat = location.lat
+                    locationEntity.lon = location.lon
+                }
+                
+                for forecast in forecasts {
+                    let fetchForecastRequest: NSFetchRequest<ForecastEntity> = ForecastEntity.fetchRequest()
+                    fetchForecastRequest.predicate = NSPredicate(format: "date == %@ AND location == %@", forecast.date as CVarArg, locationEntity)
+                    
+                    let existingForecasts = try? context.fetch(fetchForecastRequest)
+                    
+                    if let existingForecast = existingForecasts?.first {
+                        existingForecast.maxtemp_c = forecast.maxtemp_c
+                        existingForecast.mintemp_c = forecast.mintemp_c
+                        existingForecast.conditionText = forecast.conditionText
+                    } else {
+                        let forecastEntity = ForecastEntity(context: context)
+                        forecastEntity.date = forecast.date
+                        forecastEntity.maxtemp_c = forecast.maxtemp_c
+                        forecastEntity.mintemp_c = forecast.mintemp_c
+                        forecastEntity.conditionText = forecast.conditionText
+                        forecastEntity.location = locationEntity
+                    }
+                }
+                if context.hasChanges {
+                    do {
+                        try context.save()
+                        print("Successfully saved or updated forecast data in Core Data.")
+                    } catch {
+                        result = .failure(CoreDataError.forecastSaveError)
+                    }
+                } else {
+                    print("No changes detected in the context. No save operation performed.")
+                }
+                
+            } catch {
+                result = .failure(CoreDataError.locationFetchError)
+            }
+        }
+        return result
+    }
+
+    
+    // Fetches all Forecasts
+    func fetchForecasts() -> Result<(ForecastLocation, [Forecast]), Error> {
+        let locationFetchRequest: NSFetchRequest<ForecastLocationEntity> = ForecastLocationEntity.fetchRequest()
+        
+        do {
+            let fetchedLocations = try container.viewContext.fetch(locationFetchRequest)
+            if let firstLocation = fetchedLocations.first {
+                let location = ForecastLocation(name: firstLocation.name ?? "",
+                                                region: firstLocation.region ?? "",
+                                                country: firstLocation.country ?? "",
+                                                lat: firstLocation.lat,
+                                                lon: firstLocation.lon)
+                
+                let forecastFetchRequest: NSFetchRequest<ForecastEntity> = ForecastEntity.fetchRequest()
+                forecastFetchRequest.predicate = NSPredicate(format: "location == %@", firstLocation) // This line filters forecasts for the specific location
+                
+                let fetchedForecasts = try container.viewContext.fetch(forecastFetchRequest)
+                let forecasts = fetchedForecasts.map {
+                    Forecast(date: $0.date ?? Date(),
+                             maxtemp_c: $0.maxtemp_c,
+                             mintemp_c: $0.mintemp_c,
+                             conditionText: $0.conditionText ?? "")
+                }
+                return .success((location, forecasts))
+            } else {
+                print("No location data found in Core Data.")
+                return .failure(CoreDataError.forecastFetchError) // Assuming you have an error enum like this
+            }
+        } catch {
+            print("Failed fetching forecasts: \(error)")
+            return .failure(CoreDataError.forecastFetchError)
         }
     }
 }

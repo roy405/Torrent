@@ -18,6 +18,7 @@ enum WeatherError: LocalizedError {
     case weatherCityFetchError
     case weatherCityMapFetchError
     
+    // Switch case for error cases and the respective error descriptions
     var errorDescription: String? {
         switch self {
         case .urlCreation: return "Failed to create the API request URL."

@@ -15,12 +15,14 @@ struct CurrentWeatherView: View {
     @State private var isLoading: Bool = true // To indicate loading
     @State private var dataUpdated: Bool = false
     @State private var showErrorAlert: Bool = false
-
-
+    
+    
     var body: some View {
-        ZStack { 
-            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.2), Color.white]), startPoint: .topLeading, endPoint: .bottomTrailing) // Example gradient
-                .cornerRadius(12)
+        ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.white]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                .padding(.horizontal)
 
             HStack(spacing: 20) {
                 if let image = uiImage {
@@ -28,26 +30,36 @@ struct CurrentWeatherView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                } else if isLoading {
-                    ProgressView()
-                        .frame(width: 80, height: 80)
+                } else {
+                    if isLoading {
+                        RoundedRectangle(cornerRadius: 40)
+                            .fill(Color.gray.opacity(0.1))
+                            .frame(width: 80, height: 80)
+                            .overlay(ProgressView()) // Overlaying ProgressView on placeholder
+                    } else {
+                        Image(systemName: "cloud")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                    }
                 }
 
-                VStack(alignment: .leading, spacing: 8) { // Consistent spacing
+                VStack(alignment: .leading, spacing: 8) {
                     Text("\(currentWeatherViewModel.temperature, specifier: "%.1f")°C")
                         .font(.largeTitle)
-                        .fontWeight(.medium)
-                        .id(currentWeatherViewModel.temperature)
+                        .fontWeight(.bold)
                     Text(currentWeatherViewModel.conditionText)
                         .font(.title2)
-                        .fontWeight(.light)
+                        .fontWeight(.medium)
                     Text(currentWeatherViewModel.location)
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundColor(Color.gray)
                 }
             }
-            .padding()
+            .padding(.horizontal, 15)
+            .padding(.vertical, 10)
         }
+        
         .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)

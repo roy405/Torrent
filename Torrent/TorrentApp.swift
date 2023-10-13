@@ -10,11 +10,15 @@ import SwiftUI
 @main
 struct TorrentApp: App {
     let persistenceController = PersistenceController.shared
-    var locationManager = LocationManager()  // Changed this to @ObservedObject to observe changes.
+    var locationManager = LocationManager()
     @State private var appState: AppState = .waitingForPermission
-    @State private var showCityNameError = false
-    @State private var showLocationDeniedError = false
-    @State private var showLocationRestrictedError = false
+    
+    enum AlertType {
+        case locationDenied
+        case locationRestricted
+        case none
+    }
+    @State private var currentAlert: AlertType = .none
 
     var body: some Scene {
         WindowGroup {
@@ -23,26 +27,29 @@ struct TorrentApp: App {
                 case .waitingForPermission:
                     Text("Waiting for location permission...")
                 case .permissionDenied:
-                    Text("Permission denied. Please enable location services in settings.")
+                    ContentView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 case .ready:
                     ContentView()
                         .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 }
             }
-            .alert(isPresented: $showCityNameError) {
-                Alert(title: Text("Error"),
-                      message: Text("Failed to obtain city name from coordinates. Please try again."),
-                      dismissButton: .default(Text("OK")))
-            }
-            .alert(isPresented: $showLocationDeniedError) {
-                Alert(title: Text("Location Access Denied"),
-                      message: Text("Hi, This is a Weather app and for location accuracy, it is very imminent for the location services to be active. Don't worry, we don't do background tasks or access your weather in the background, only when you use the app and briefly. Thank you for your consideration."),
-                      dismissButton: .default(Text("OK")))
-            }
-            .alert(isPresented: $showLocationRestrictedError) {
-                Alert(title: Text("Location Restricted"),
-                      message: Text("Parental Restrictions are preventing you from using the App. We are deeply sorry :("),
-                      dismissButton: .default(Text("OK")))
+            .alert(isPresented: Binding<Bool>(
+                get: { self.currentAlert != .none },
+                set: { if !$0 { self.currentAlert = .none } }
+            )) {
+                switch currentAlert {
+                case .locationDenied:
+                    return Alert(title: Text("Location Access Denied"),
+                                 message: Text("Please enable location services in settings to take full advantage of the app Settings > Privacy > Location Services."),
+                                 dismissButton: .default(Text("OK")))
+                case .locationRestricted:
+                    return Alert(title: Text("Location Access Restricted"),
+                                 message: Text("Location access is restricted. Please contact your device administrator or check parental controls."),
+                                 dismissButton: .default(Text("OK")))
+                default:
+                    return Alert(title: Text("Unknown Error"), message: nil, dismissButton: .default(Text("OK")))
+                }
             }
             .onAppear {
                 // Use the locationManager to initiate the check
@@ -52,24 +59,27 @@ struct TorrentApp: App {
                 switch status {
                 case .authorizedAlways, .authorizedWhenInUse:
                     self.appState = .ready
-                case .denied, .restricted:
-                    self.appState = .permissionDenied
+                case .denied:
+                    self.currentAlert = .locationDenied
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // 2 seconds delay
+                        self.appState = .permissionDenied
+                    }
                 default:
                     break
                 }
             }
-            .onReceive(locationManager.failedToGetCityNamePublisher) { _ in
-                self.showCityNameError = true
-            }
             .onReceive(locationManager.locationDeniedErrorPublisher) { _ in
-                self.showLocationDeniedError = true
+                print("Received location denied from publisher.")
+                self.currentAlert = .locationDenied
             }
             .onReceive(locationManager.locationRestrictedErrorPublisher) { _ in
-                self.showLocationRestrictedError = true
+                print("Received location restricted from publisher.")
+                self.currentAlert = .locationRestricted
             }
         }
     }
 }
+
 
 
 

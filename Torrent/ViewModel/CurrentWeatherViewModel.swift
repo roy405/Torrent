@@ -59,8 +59,8 @@ class CurrentWeatherViewModel: ObservableObject {
     private func getCurrentWeatherDataFromAPI(city: String) -> AnyPublisher<WeatherResponse, Error> {
         // Headers required for the API request.
         let headers = [
-            "X-RapidAPI-Key": "620035982dmshfefc0b106524436p1ef359jsn8f2cb31aa928",
-            "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+            "X-RapidAPI-Key": Constants.RAPIDAPIKEY,
+            "X-RapidAPI-Host": Constants.RAPIDAPIHOST
         ]
         // Encoding the city name to be URL-safe.
         let safeCityString = city.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? city

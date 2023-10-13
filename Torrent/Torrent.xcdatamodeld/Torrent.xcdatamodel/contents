@@ -22,6 +22,21 @@
         <attribute name="reportedCondition" optional="YES" attributeType="String"/>
         <attribute name="reportedTemperature" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
+    <entity name="ForecastEntity" representedClassName="ForecastEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="conditionText" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="maxtemp_c" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="mintemp_c" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ForecastLocationEntity" inverseName="forecasts" inverseEntity="ForecastLocationEntity"/>
+    </entity>
+    <entity name="ForecastLocationEntity" representedClassName="ForecastLocationEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="country" optional="YES" attributeType="String"/>
+        <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="region" optional="YES" attributeType="String"/>
+        <relationship name="forecasts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ForecastEntity" inverseName="location" inverseEntity="ForecastEntity"/>
+    </entity>
     <entity name="RecentWeatherEntity" representedClassName="RecentWeatherEntity" syncable="YES" codeGenerationType="class">
         <attribute name="city" optional="YES" attributeType="String"/>
         <attribute name="conditionText" optional="YES" attributeType="String"/>

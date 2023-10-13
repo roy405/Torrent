@@ -21,6 +21,9 @@ enum CoreDataError: LocalizedError {
     case feedbackFetchErrorDuringDeletion
     case recentWeatherForCityFetchError
     case recentWeatherForCityDeleteError
+    case forecastSaveError
+    case forecastFetchError
+    case locationFetchError
     
     // Switch case for error cases and the respective error descriptions
     var errorDescription: String? {
@@ -48,7 +51,14 @@ enum CoreDataError: LocalizedError {
         case .recentWeatherForCityFetchError:
             return "Failed to Fetch Recent Weather for Selected Cities"
         case .recentWeatherForCityDeleteError:
-            return "Failed to Delete Recent Weather for Selecte City"
+            return "Failed to Delete Recent Weather for Selected City"
+        case .forecastSaveError:
+            return "Failed to Save Forecast Data for Selected City"
+        case .forecastFetchError:
+            return "Failed to Fetch Forecast Data for Selected City"
+        case .locationFetchError:
+            return "Failed to fetch location for forecasting"
+        
         }
     }
 }
